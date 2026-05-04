@@ -257,6 +257,8 @@
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 24px;
+  padding-top: 12px;
+  padding-bottom: 12px;
 }
 
 .kantin-menu-empty {
@@ -277,7 +279,10 @@
   gap: 12px;
   background: #fff;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.25);
-  transition: background-color 140ms ease, border-color 140ms ease, box-shadow 140ms ease;
+  transition:
+    background-color 140ms ease,
+    border-color 140ms ease,
+    box-shadow 140ms ease;
 }
 
 .kantin-menu-card:not(.is-disabled-card) {
@@ -319,6 +324,13 @@
   color: #333;
 }
 
+.kantin-menu-stock {
+  margin: 0;
+  font-family: "Poppins", var(--font-sans);
+  font-size: 14px;
+  color: #667085;
+}
+
 .kantin-menu-bottom {
   display: flex;
   align-items: center;
@@ -340,7 +352,9 @@
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: transform 180ms ease, filter 180ms ease;
+  transition:
+    transform 180ms ease,
+    filter 180ms ease;
 }
 
 .kantin-add-button img {
@@ -393,7 +407,10 @@
   grid-template-rows: auto minmax(0, 1fr) auto;
   gap: 24px;
   max-height: calc(100vh - 132px);
-  transition: transform 220ms ease, box-shadow 220ms ease, border-color 220ms ease;
+  transition:
+    transform 220ms ease,
+    box-shadow 220ms ease,
+    border-color 220ms ease;
   border: 1px solid transparent;
 }
 
@@ -510,6 +527,11 @@
   cursor: pointer;
 }
 
+.kantin-order-item-actions button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
 .kantin-order-footer {
   padding-top: 12px;
   border-top: 1px solid #efefef;
@@ -555,7 +577,233 @@
 }
 
 .kantin-mobile-cartbar {
-  transition: transform 220ms ease, box-shadow 220ms ease, background-color 220ms ease;
+  transition:
+    transform 220ms ease,
+    box-shadow 220ms ease,
+    background-color 220ms ease;
+  padding-top: 32px;
+}
+
+body.is-mobile-sheet-open {
+  overflow: hidden;
+}
+
+.kantin-mobile-sheet {
+  position: fixed;
+  inset: 0;
+  z-index: 48;
+}
+
+.kantin-mobile-sheet[hidden] {
+  display: none !important;
+}
+
+.kantin-mobile-sheet-backdrop {
+  position: absolute;
+  inset: 0;
+  border: 0;
+  background: rgba(17, 24, 39, 0.34);
+  opacity: 0;
+  transition: opacity 220ms ease;
+}
+
+.kantin-mobile-sheet-dialog {
+  position: absolute;
+  inset: auto 0 0;
+  display: flex;
+  justify-content: center;
+  padding-top: 24px;
+  pointer-events: none;
+}
+
+.kantin-mobile-sheet-box {
+  width: min(100%, 428px);
+  max-height: min(78vh, 560px);
+  padding: 24px 16px;
+  border-radius: 16px 16px 0 0;
+  background: #fff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.25);
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  gap: 42px;
+  transform: translateY(100%);
+  transition: transform 220ms ease;
+  pointer-events: auto;
+}
+
+.kantin-mobile-sheet.is-open .kantin-mobile-sheet-backdrop {
+  opacity: 1;
+}
+
+.kantin-mobile-sheet.is-open .kantin-mobile-sheet-box {
+  transform: translateY(0);
+}
+
+.kantin-mobile-sheet-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.kantin-mobile-sheet-header h2 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 600;
+  color: #000;
+}
+
+.kantin-mobile-sheet-dismiss {
+  width: 32px;
+  height: 32px;
+  border: 0;
+  border-radius: 999px;
+  background: #fff;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.25);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex: 0 0 auto;
+}
+
+.kantin-mobile-sheet-dismiss img {
+  width: 24px;
+  height: 24px;
+}
+
+.kantin-mobile-sheet-content {
+  min-height: 0;
+  overflow-y: auto;
+  display: grid;
+  align-content: start;
+  gap: 24px;
+}
+
+.kantin-mobile-order-empty {
+  display: grid;
+  justify-items: center;
+  gap: 8px;
+  padding: 12px 0;
+  text-align: center;
+}
+
+.kantin-mobile-order-empty img {
+  width: 84px;
+  height: 84px;
+}
+
+.kantin-mobile-order-empty strong,
+.kantin-mobile-order-empty p {
+  margin: 0;
+  font-family: "Poppins", var(--font-sans);
+}
+
+.kantin-mobile-order-empty p {
+  color: #5c5c5c;
+  font-size: 14px;
+}
+
+.kantin-mobile-order-items {
+  display: grid;
+  gap: 24px;
+}
+
+.kantin-mobile-order-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.kantin-mobile-order-item-copy {
+  min-width: 0;
+  flex: 1 1 auto;
+  display: grid;
+  gap: 8px;
+}
+
+.kantin-mobile-order-item-copy strong,
+.kantin-mobile-order-item-copy span {
+  display: block;
+  line-height: normal;
+}
+
+.kantin-mobile-order-item-copy strong {
+  font-family: "Poppins", var(--font-sans);
+  font-size: 16px;
+  font-weight: 400;
+  color: #000;
+}
+
+.kantin-mobile-order-item-copy span {
+  font-family: "Inter", "Poppins", var(--font-sans);
+  font-size: 14px;
+  font-weight: 400;
+  color: #4a4a4a;
+}
+
+.kantin-mobile-order-remove {
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex: 0 0 auto;
+}
+
+.kantin-mobile-order-remove img {
+  width: 24px;
+  height: 24px;
+}
+
+.kantin-mobile-sheet-footer {
+  padding-top: 12px;
+  box-shadow: 0 -1px 1px rgba(0, 0, 0, 0.1);
+  display: grid;
+  gap: 24px;
+}
+
+.kantin-mobile-sheet-total {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  font-family: "Poppins", var(--font-sans);
+  font-size: 16px;
+  line-height: normal;
+}
+
+.kantin-mobile-sheet-total span {
+  color: #5c5c5c;
+}
+
+.kantin-mobile-sheet-total strong {
+  color: #000;
+  font-weight: 400;
+}
+
+.kantin-mobile-sheet-submit {
+  width: 100%;
+  min-height: 64px;
+  padding: 12px 16px;
+  border: 0;
+  border-radius: 18px;
+  background: #c0baba;
+  color: #fff;
+  font-family: "Poppins", var(--font-sans);
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.kantin-mobile-sheet-submit.is-ready {
+  background: #e97d28;
+  padding: 12px 32px;
 }
 
 .kantin-detail-footer {
@@ -630,13 +878,13 @@
   opacity: 0.9;
 }
 
-@media (max-width: 900px) {
+@media (max-width: 1180px) {
   .kantin-detail-layout {
     grid-template-columns: 1fr;
   }
 
   .kantin-order-panel {
-    position: static;
+    display: none;
   }
 
   .kantin-order-box {
@@ -647,6 +895,132 @@
     max-height: none;
     overflow-y: visible;
     padding-right: 0;
+  }
+
+  .kantin-mobile-sheet-box {
+    width: 100%;
+    max-height: 82vh;
+  }
+
+  .kantin-mobile-cartbar {
+    position: sticky;
+    bottom: 32px;
+    z-index: 28;
+    width: calc(100% - 32px);
+    margin: 0 16px;
+    padding: 20px 20px;
+    border: 0;
+    border-radius: 999px;
+    background: #ff7a00;
+    box-shadow: 0 8px 18px rgba(255, 122, 0, 0.24);
+    display: flex;
+    align-items: center;
+  }
+
+  .kantin-mobile-cartbar[hidden] {
+    display: none !important;
+  }
+
+  .kantin-mobile-cartbar-copy,
+  .kantin-mobile-cartbar-totalwrap {
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .kantin-mobile-cartbar {
+    cursor: pointer;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .kantin-mobile-cartbar-copy {
+    width: 244px;
+    max-width: calc(100% - 96px);
+    display: grid;
+    justify-items: start;
+    gap: 2px;
+    color: #fff;
+    text-align: left;
+  }
+
+  .kantin-mobile-cartbar-items {
+    font-family: var(--font-sans);
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 1;
+    color: #fff;
+  }
+
+  .kantin-mobile-cartbar-totalwrap {
+    gap: 8px;
+    color: #fff;
+  }
+
+  .kantin-mobile-cartbar-total {
+    font-family: var(--font-sans);
+    font-size: 18px;
+    font-weight: 700;
+    line-height: 1;
+    white-space: nowrap;
+  }
+
+  .kantin-mobile-cartbar-totalwrap img {
+    width: 24px;
+    height: 24px;
+    object-fit: contain;
+    filter: brightness(0) invert(1);
+  }
+
+  .kantin-mobile-cartbar:active {
+    transform: translateY(1px);
+    box-shadow: 0 5px 12px rgba(255, 122, 0, 0.22);
+  }
+}
+
+@media (max-width: 520px) {
+  .kantin-mobile-sheet-dialog {
+    padding-top: 16px;
+  }
+
+  .kantin-mobile-cartbar {
+    width: calc(100% - 24px);
+    margin: 0 12px;
+    bottom: 24px;
+    padding: 20px 20px;
+  }
+
+  .kantin-mobile-cartbar-copy {
+    max-width: calc(100% - 84px);
+  }
+
+  .kantin-mobile-cartbar-total {
+    font-size: 17px;
+  }
+
+  .kantin-mobile-cartbar-totalwrap img {
+    width: 20px;
+    height: 20px;
+  }
+}
+
+@media (max-width: 399px) {
+  .kantin-mobile-cartbar-copy {
+    max-width: calc(100% - 78px);
+  }
+
+  .kantin-mobile-cartbar-items {
+    font-size: 14px;
+  }
+
+  .kantin-mobile-cartbar-total {
+    font-size: 16px;
+  }
+
+  .kantin-mobile-cartbar-totalwrap img {
+    width: 18px;
+    height: 18px;
+    filter: brightness(0) invert(1);
   }
 }
 
@@ -667,17 +1041,32 @@
   }
 
   .kantin-stats-grid {
-    display: grid;
+    margin-right: -12px;
+    display: flex;
+    gap: 0;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-snap-type: x proximity;
+    background: transparent;
+    scrollbar-width: none;
+  }
+
+  .kantin-stats-grid::-webkit-scrollbar {
+    display: none;
   }
 
   .kantin-stat-card {
-    border-right: 0;
-    border-bottom: 1px solid #d1d1d1;
-    padding: 16px;
+    min-width: 176px;
+    min-height: 96px;
+    padding: 16px 20px;
+    border-right: 1px solid #d1d1d1;
+    border-bottom: 0;
+    background: #fff;
+    scroll-snap-align: start;
   }
 
   .kantin-stat-card:last-child {
-    border-bottom: 0;
+    border-right: 1px solid #d1d1d1;
   }
 
   .kantin-detail-footer {
@@ -924,6 +1313,10 @@
     color: #5c5c5c;
   }
 
+  .is-featured-card.is-disabled-card .kantin-menu-image {
+    display: none;
+  }
+
   .is-featured-card.is-disabled-card .kantin-menu-bottom span {
     color: #5c5c5c;
   }
@@ -992,98 +1385,8 @@
     color: #5c5c5c;
   }
 
-  .kantin-order-panel {
+  .is-list-card.is-disabled-card .kantin-add-button {
     display: none;
-  }
-
-  .kantin-mobile-cartbar {
-    position: sticky;
-    bottom: 0;
-    z-index: 28;
-    width: calc(100% - 32px);
-    margin: 0 16px 8px;
-    padding: 16px 10px;
-    border: 0;
-    background: #fff;
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.25);
-    display: flex;
-    align-items: flex-start;
-  }
-
-  .kantin-mobile-cartbar[hidden] {
-    display: none !important;
-  }
-
-  .kantin-mobile-cartbar-copy,
-  .kantin-mobile-cartbar-totalwrap {
-    display: inline-flex;
-    align-items: center;
-  }
-
-  .kantin-mobile-cartbar {
-    cursor: pointer;
-  }
-
-  .kantin-mobile-cartbar::before {
-    content: "";
-    position: absolute;
-    inset: 16px 10px;
-    border-radius: 999px;
-    background: #ff7a00;
-    z-index: 0;
-  }
-
-  .kantin-mobile-cartbar-copy,
-  .kantin-mobile-cartbar-totalwrap {
-    position: relative;
-    z-index: 1;
-  }
-
-  .kantin-mobile-cartbar {
-    justify-content: space-between;
-    align-items: center;
-    gap: 12px;
-  }
-
-  .kantin-mobile-cartbar-copy {
-    width: 244px;
-    max-width: calc(100% - 108px);
-    padding-left: 22px;
-    display: grid;
-    justify-items: start;
-    gap: 4px;
-    color: #fff;
-    text-align: left;
-  }
-
-  .kantin-mobile-cartbar-items {
-    font-size: 16px;
-    font-weight: 400;
-    line-height: 1;
-  }
-
-  .kantin-mobile-cartbar-kantin {
-    font-size: 14px;
-    font-weight: 400;
-    line-height: 1.1;
-  }
-
-  .kantin-mobile-cartbar-totalwrap {
-    padding-right: 22px;
-    gap: 8px;
-    color: #fff;
-  }
-
-  .kantin-mobile-cartbar-total {
-    font-size: 18px;
-    font-weight: 700;
-    line-height: 1;
-  }
-
-  .kantin-mobile-cartbar-totalwrap img {
-    width: 24px;
-    height: 24px;
-    filter: brightness(0) invert(1);
   }
 
   .kantin-detail-footer {

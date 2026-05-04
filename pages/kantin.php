@@ -2,6 +2,7 @@
 declare(strict_types=1);
 
 require_once __DIR__ . '/../app/auth.php';
+require_once __DIR__ . '/../app/db.php';
 
 require_login('kantin');
 $user = current_user();
@@ -13,15 +14,68 @@ $kantinCards = [
   ['name' => 'Kantin Belum Terdaftar', 'image' => 'assets/img/icons/not-active.svg', 'active' => false],
 ];
 
-$menus = [
-  ['name' => 'Ayam Geprek + Nasi Putih', 'price' => 'Rp. 7.000', 'image' => 'menu-ayam.png'],
-  ['name' => 'Cireng Goreng', 'price' => 'Rp. 3.000', 'image' => 'menu-2.png'],
-  ['name' => 'Es Teh Manis', 'price' => 'Rp. 2.000', 'image' => 'hero-drink.png'],
-  ['name' => 'Risoles Mayo Panas', 'price' => 'Rp. 2.500', 'image' => 'menu-4.png'],
-  ['name' => 'Kopi Goodday', 'price' => 'Rp. 2.000', 'image' => 'hero-side.png'],
-  ['name' => 'Mendoan / Gorengan', 'price' => 'Rp. 3.000', 'image' => 'hero-mendoan.png'],
-  ['name' => 'Soto Ayam Seger', 'price' => 'Rp. 5.000', 'image' => 'hero-soto.png'],
-];
+function format_menu_name(string $value): string {
+  $value = str_replace('_', ' ', trim($value));
+  $value = preg_replace('/\s+/', ' ', $value) ?? $value;
+  return mb_convert_case($value, MB_CASE_TITLE, 'UTF-8');
+}
+
+function format_price_label(int $price): string {
+  return 'Rp. ' . number_format($price, 0, ',', '.');
+}
+
+function resolve_kantin_menu_image(string $gambar, string $menuName): string {
+  $gambar = trim($gambar);
+  if ($gambar !== '' && $gambar !== 'gambar.jpg') {
+    return $gambar;
+  }
+
+  $normalized = strtolower(str_replace([' ', '-', '/', '+'], '_', trim($menuName)));
+  $normalized = preg_replace('/_+/', '_', $normalized) ?? $normalized;
+
+  $fallbackMap = [
+    'nasi_geprek' => 'assets/img/kantin/menu-ayam.png',
+    'ayam_geprek_nasi_putih' => 'assets/img/kantin/menu-ayam.png',
+    'cireng' => 'assets/img/kantin/menu-2.png',
+    'es_teh' => 'assets/img/kantin/hero-drink.png',
+    'es_teh_manis' => 'assets/img/kantin/hero-drink.png',
+    'gorengan' => 'assets/img/kantin/hero-mendoan.png',
+    'mendoan' => 'assets/img/kantin/hero-mendoan.png',
+    'teajus' => 'assets/img/kantin/hero-side.png',
+    'kopi_goodday' => 'assets/img/kantin/hero-side.png',
+    'soto' => 'assets/img/kantin/hero-soto.png',
+    'soto_ayam' => 'assets/img/kantin/hero-soto.png',
+    'risolmayo_panas' => 'assets/img/kantin/menu-4.png',
+    'risoles_mayo_panas' => 'assets/img/kantin/menu-4.png',
+  ];
+
+  return $fallbackMap[$normalized] ?? 'assets/img/kantin/menu-ayam.png';
+}
+
+$menus = [];
+$conn = db();
+$stmtMenu = $conn->prepare(
+  'SELECT nama_menu, harga, sisa_stock, gambar
+   FROM menu
+   WHERE id_kantin = ?
+   ORDER BY id_menu ASC
+   LIMIT 6'
+);
+$kantinId = 1;
+$stmtMenu->bind_param('i', $kantinId);
+$stmtMenu->execute();
+$menuResult = $stmtMenu->get_result();
+
+while ($row = $menuResult->fetch_assoc()) {
+  $menus[] = [
+    'name' => format_menu_name((string)$row['nama_menu']),
+    'price' => format_price_label((int)$row['harga']),
+    'image' => resolve_kantin_menu_image((string)$row['gambar'], (string)$row['nama_menu']),
+    'stock' => (int)$row['sisa_stock'],
+  ];
+}
+
+$stmtMenu->close();
 
 $benefits = [
   ['title' => 'Tanpa Ribet, SatSet Makanan Jadi', 'image' => 'menu-3.png', 'class' => 'benefit-pink'],
@@ -145,9 +199,10 @@ $benefits = [
           <?php foreach ($menus as $menu): ?>
             <a class="menu-card" href="#pilihan-kantin" aria-label="Pilih <?= htmlspecialchars($menu['name']) ?>">
               <div class="menu-img">
-                <img src="assets/img/kantin/<?= htmlspecialchars($menu['image']) ?>" alt="<?= htmlspecialchars($menu['name']) ?>" />
+                <img src="<?= htmlspecialchars($menu['image']) ?>" alt="<?= htmlspecialchars($menu['name']) ?>" />
               </div>
               <h3><?= htmlspecialchars($menu['name']) ?></h3>
+              <p class="menu-stock">Stok: <?= htmlspecialchars((string)$menu['stock']) ?></p>
               <div class="menu-footer">
                 <span><?= htmlspecialchars($menu['price']) ?></span>
                 <img src="assets/img/kantin/icon-plus.svg" alt="" />

@@ -578,6 +578,15 @@
   text-transform: capitalize;
 }
 
+.menu-stock {
+  width: 100%;
+  margin: -10px 0 0;
+  font-family: var(--font-sans);
+  font-size: 13px;
+  font-weight: 700;
+  color: #667085;
+}
+
 .menu-footer {
   width: 100%;
   display: flex;

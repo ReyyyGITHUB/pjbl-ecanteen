@@ -100,7 +100,10 @@ while ($row = $menuResult->fetch_assoc()) {
 }
 $stmtMenu->close();
 
-$popularMenus = array_slice($allMenus, 0, 6);
+$popularMenus = array_values(array_filter(
+  $allMenus,
+  static fn(array $menu): bool => $menu['stock'] < 10
+));
 
 $sections = [
   [
@@ -223,22 +226,27 @@ $stats = [
                     <img class="kantin-menu-image" src="<?= htmlspecialchars($item['image']) ?>" alt="<?= htmlspecialchars($item['name']) ?>" />
                     <div class="kantin-menu-copy">
                       <h3><?= htmlspecialchars($item['name']) ?></h3>
+                      <p class="kantin-menu-stock">
+                        <?= $item['stock'] > 0 ? 'Stok: ' . htmlspecialchars((string)$item['stock']) : 'Stok habis' ?>
+                      </p>
                       <div class="kantin-menu-bottom">
                         <span><?= htmlspecialchars($item['price_label']) ?></span>
-                        <button
-                          type="button"
-                          class="kantin-add-button"
-                          data-add-to-cart
-                          data-menu-id="<?= htmlspecialchars((string)$item['id']) ?>"
-                          data-menu-name="<?= htmlspecialchars($item['name']) ?>"
-                          data-menu-price="<?= htmlspecialchars((string)$item['price']) ?>"
-                          data-menu-image="<?= htmlspecialchars($item['image']) ?>"
-                          data-menu-stock="<?= htmlspecialchars((string)$item['stock']) ?>"
-                          <?= $item['disabled'] ? 'disabled aria-disabled="true"' : '' ?>
-                          aria-label="Tambah <?= htmlspecialchars($item['name']) ?>"
-                        >
-                          <img src="assets/img/kantin-1/<?= $item['disabled'] ? 'icon-plus-gray.svg' : ($item['featured'] ? 'icon-plus-orange.svg' : 'icon-plus-gray.svg') ?>" alt="" />
-                        </button>
+                        <?php if (!$item['disabled']): ?>
+                          <button
+                            type="button"
+                            class="kantin-add-button"
+                            data-add-to-cart
+                            data-menu-id="<?= htmlspecialchars((string)$item['id']) ?>"
+                            data-menu-name="<?= htmlspecialchars($item['name']) ?>"
+                            data-menu-price="<?= htmlspecialchars((string)$item['price']) ?>"
+                            data-menu-image="<?= htmlspecialchars($item['image']) ?>"
+                            data-menu-stock="<?= htmlspecialchars((string)$item['stock']) ?>"
+                            <?= $item['disabled'] ? 'disabled aria-disabled="true"' : '' ?>
+                            aria-label="Tambah <?= htmlspecialchars($item['name']) ?>"
+                          >
+                            <img src="assets/img/kantin-1/<?= $item['disabled'] ? 'icon-plus-gray.svg' : 'icon-plus-orange.svg' ?>" alt="" />
+                          </button>
+                        <?php endif; ?>
                       </div>
                     </div>
                   </article>
@@ -265,16 +273,45 @@ $stats = [
       </div>
     </main>
 
-    <button type="button" class="kantin-mobile-cartbar" data-mobile-cartbar hidden aria-label="Lihat ringkasan pesanan">
+    <button
+      type="button"
+      class="kantin-mobile-cartbar"
+      data-mobile-cartbar
+      hidden
+      aria-label="Lihat ringkasan pesanan"
+      aria-expanded="false"
+      aria-controls="kantin-mobile-order-sheet"
+    >
       <span class="kantin-mobile-cartbar-copy">
         <span class="kantin-mobile-cartbar-items" data-mobile-cartbar-items>0 Items</span>
-        <span class="kantin-mobile-cartbar-kantin"><?= htmlspecialchars(format_menu_name((string)$kantin['nama_kantin'])) ?> (Spot Paling Pojok)</span>
       </span>
       <span class="kantin-mobile-cartbar-totalwrap">
         <strong class="kantin-mobile-cartbar-total" data-mobile-cartbar-total>0</strong>
         <img src="assets/img/kantin/icon-cart.svg" alt="" />
       </span>
     </button>
+
+    <div class="kantin-mobile-sheet" id="kantin-mobile-order-sheet" data-mobile-sheet hidden>
+      <button type="button" class="kantin-mobile-sheet-backdrop" data-mobile-sheet-close aria-label="Tutup ringkasan pesanan"></button>
+      <section class="kantin-mobile-sheet-dialog" role="dialog" aria-modal="true" aria-labelledby="kantin-mobile-sheet-title">
+        <div class="kantin-mobile-sheet-box">
+          <div class="kantin-mobile-sheet-header">
+            <h2 id="kantin-mobile-sheet-title">Pesanan Anda</h2>
+            <button type="button" class="kantin-mobile-sheet-dismiss" data-mobile-sheet-close aria-label="Tutup pesanan">
+              <img src="assets/img/kantin-1/icon-close-orange.svg" alt="" />
+            </button>
+          </div>
+          <div class="kantin-mobile-sheet-content" data-mobile-order-content></div>
+          <div class="kantin-mobile-sheet-footer">
+            <div class="kantin-mobile-sheet-total">
+              <span>Total Pesanan:</span>
+              <strong data-mobile-order-total>Rp 0</strong>
+            </div>
+            <button type="button" class="kantin-mobile-sheet-submit" data-mobile-order-submit disabled>Pesan Sekarang!</button>
+          </div>
+        </div>
+      </section>
+    </div>
 
     <footer class="kantin-detail-footer">
       <div class="kantin-detail-footer-main">
