@@ -124,7 +124,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <path d="M4.5 20.25c1.7-4 13.3-4 15 0" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
                   </svg>
                 </span>
-                <input class="field-input" name="username" type="text" autocomplete="username" required placeholder="Buat username" />
+                <input class="field-input" name="username" type="text" autocomplete="username" required placeholder="Contoh: @rayhan01" />
               </div>
             </label>
 
@@ -137,7 +137,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <path d="M7 10.25h10A2.75 2.75 0 0 1 19.75 13v4A2.75 2.75 0 0 1 17 19.75H7A2.75 2.75 0 0 1 4.25 17v-4A2.75 2.75 0 0 1 7 10.25Z" stroke="currentColor" stroke-width="1.7"/>
                   </svg>
                 </span>
-                <input id="reg-password" class="field-input" name="password" type="password" autocomplete="new-password" required placeholder="Buat password" />
+                <input id="reg-password" class="field-input" name="password" type="password" autocomplete="new-password" required placeholder="Minimal 6 karakter, tanpa spasi" />
                 <button class="field-action" type="button" data-toggle-password aria-controls="reg-password" aria-pressed="false" aria-label="Tampilkan password">
                   <svg class="field-action-eye" viewBox="0 0 24 24" width="18" height="18" fill="none" aria-hidden="true">
                     <path d="M2.75 12s3.3-7 9.25-7 9.25 7 9.25 7-3.3 7-9.25 7-9.25-7-9.25-7Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>
@@ -157,7 +157,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <path d="M9.6 14.1 11 15.5l3.4-3.4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
                   </svg>
                 </span>
-                <input id="reg-confirm" class="field-input" name="password_confirm" type="password" autocomplete="new-password" required placeholder="Ulangi password" />
+                <input id="reg-confirm" class="field-input" name="password_confirm" type="password" autocomplete="new-password" required placeholder="Ketik ulang password yang sama" />
                 <button class="field-action" type="button" data-toggle-password aria-controls="reg-confirm" aria-pressed="false" aria-label="Tampilkan password">
                   <svg class="field-action-eye" viewBox="0 0 24 24" width="18" height="18" fill="none" aria-hidden="true">
                     <path d="M2.75 12s3.3-7 9.25-7 9.25 7 9.25 7-3.3 7-9.25 7-9.25-7-9.25-7Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>
@@ -187,7 +187,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <path d="M4.5 20.25c1.7-4 13.3-4 15 0" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
                   </svg>
                 </span>
-                <input class="field-input" name="full_name" type="text" autocomplete="name" required placeholder="Masukkan nama lengkap" />
+                <input class="field-input" name="full_name" type="text" autocomplete="name" required placeholder="Contoh: Rayhan Pratama" />
               </div>
             </label>
 
@@ -223,7 +223,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <path d="M8.2 6.75 6.9 5.45a2 2 0 0 0-2.83 0l-.7.7a2.1 2.1 0 0 0-.5 2.2c1.3 3.8 4.2 8.3 8.4 12.4s8.6 7.1 12.4 8.4a2.1 2.1 0 0 0 2.2-.5l.7-.7a2 2 0 0 0 0-2.83l-1.3-1.3a2 2 0 0 0-2.1-.47l-2.2.73a2 2 0 0 1-2.08-.5l-2.8-2.8a2 2 0 0 1-.5-2.08l.73-2.2A2 2 0 0 0 15.9 14l-1.3-1.3" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
                   </svg>
                 </span>
-                <input class="field-input" name="phone" type="tel" autocomplete="tel" inputmode="tel" required placeholder="081234567890" />
+                <input class="field-input" name="phone" type="tel" autocomplete="tel" inputmode="tel" required placeholder="Contoh: 0812345678901" />
               </div>
             </label>
 

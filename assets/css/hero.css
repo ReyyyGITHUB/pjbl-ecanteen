@@ -64,8 +64,8 @@
   background: #ffffff;
   border: 1px solid #d1d1d1;
   border-radius: 12px;
-  padding: 0 8px 0 16px;
-  height: 54px;
+  padding: 0 8px 0 15px;
+  min-height: 54px;
   display: flex;
   align-items: center;
   gap: 10px;
@@ -82,6 +82,8 @@
 
 .hero-search-input {
   width: 100%;
+  min-width: 0;
+  flex: 1 1 auto;
   border: 0;
   outline: 0;
   background: transparent;
@@ -106,6 +108,7 @@
 .hero-search-btn {
   width: 54px;
   height: 54px;
+  flex: 0 0 54px;
   border-radius: 0 12px 12px 0;
   border: 0;
   background: transparent;
@@ -201,6 +204,30 @@
   .hero-search,
   .hero-cta {
     width: 100%;
+  }
+
+  .hero-search {
+    min-height: 68px;
+    padding: 16px 12px 16px 20px;
+    border-radius: 14px;
+  }
+
+  .hero-search-icon,
+  .hero-search-submit-icon {
+    width: 24px;
+    height: 24px;
+  }
+
+  .hero-search-input {
+    font-size: 18px;
+  }
+
+  .hero-search-btn {
+    width: 52px;
+    min-height: 44px;
+    align-self: stretch;
+    flex-basis: 68px;
+    border-radius: 0 14px 14px 0;
   }
 
   .hero-heading {

@@ -59,7 +59,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                   <path d="M4.5 20.25c1.7-4 13.3-4 15 0" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
                 </svg>
               </span>
-              <input class="field-input field-input-plain field-input-plain-icon" name="username" type="text" autocomplete="username" required placeholder="username" />
+              <input class="field-input field-input-plain field-input-plain-icon" name="username" type="text" autocomplete="username" required placeholder="@username" />
             </div>
           </div>
 
@@ -71,7 +71,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                   <path d="M7 10.25h10A2.75 2.75 0 0 1 19.75 13v4A2.75 2.75 0 0 1 17 19.75H7A2.75 2.75 0 0 1 4.25 17v-4A2.75 2.75 0 0 1 7 10.25Z" stroke="currentColor" stroke-width="1.7"/>
                 </svg>
               </span>
-              <input id="login-password" class="field-input field-input-plain field-input-plain-icon" name="password" type="password" autocomplete="current-password" required placeholder="password" />
+              <input id="login-password" class="field-input field-input-plain field-input-plain-icon" name="password" type="password" autocomplete="current-password" required placeholder="Password tanpa spasi" />
               <button class="field-action" type="button" data-toggle-password aria-controls="login-password" aria-pressed="false" aria-label="Tampilkan password">
                 <svg class="field-action-eye" viewBox="0 0 24 24" width="18" height="18" fill="none" aria-hidden="true">
                   <path d="M2.75 12s3.3-7 9.25-7 9.25 7 9.25 7-3.3 7-9.25 7-9.25-7-9.25-7Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>
