@@ -166,10 +166,12 @@
   width: min(720px, calc(100% - 32px));
   margin: -90px auto 0;
   padding: 24px 28px;
+  max-height: 420px;
   border-radius: 24px;
   background: #fff;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.22);
   position: relative;
+  overflow: hidden;
   z-index: 2;
 }
 
@@ -189,7 +191,7 @@
 
 .kantin-search-field {
   position: relative;
-  height: 54px;
+  min-height: 54px;
   width: 100%;
   padding: 10px 16px;
   display: flex;
@@ -254,36 +256,60 @@
 }
 
 .kantin-search-results {
-  margin-top: 12px;
+  margin-top: 10px;
   border: 1px solid #e5e7eb;
-  border-radius: 18px;
+  border-radius: 14px;
   background: #fff;
-  box-shadow: 0 14px 30px rgba(15, 23, 42, 0.12);
-  overflow: hidden;
-}
-
-.kantin-search-result-item,
-.kantin-search-empty {
-  width: 100%;
-  padding: 14px 18px;
-  text-align: left;
-  font: inherit;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.06);
+  padding: 6px;
+  max-height: 220px;
+  overflow-y: auto;
 }
 
 .kantin-search-result-item {
+  width: 100%;
+  padding: 10px 12px;
   border: 0;
-  background: transparent;
+  border-radius: 10px;
+  display: grid;
+  grid-template-columns: 52px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+  background: #f8fafc;
+  color: var(--text);
+  font: inherit;
+  text-align: left;
   cursor: pointer;
 }
 
-.kantin-search-result-item:hover,
-.kantin-search-result-item:focus-visible {
-  background: #fff1e5;
-  outline: none;
+.kantin-search-result-item + .kantin-search-result-item {
+  margin-top: 4px;
 }
 
-.kantin-search-empty {
+.kantin-search-result-media {
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  object-fit: cover;
+  border: 1px solid #e5e7eb;
+  background: #fff;
+}
+
+.kantin-search-result-main {
+  min-width: 0;
+  font-size: 14px;
+  font-weight: 700;
+  color: #374151;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.kantin-search-result-meta {
+  min-width: 0;
   color: #6b7280;
+  font-size: 12px;
+  white-space: nowrap;
 }
 
 .kantin-search-notice {
@@ -943,11 +969,16 @@
   .kantin-search-panel {
     margin-top: -64px;
     padding: 18px;
+    max-height: 380px;
   }
 
   .kantin-search {
     grid-template-columns: 1fr;
     gap: 12px;
+  }
+
+  .kantin-search-results {
+    max-height: 190px;
   }
 
   .kantin-search-field,

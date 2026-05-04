@@ -20,10 +20,11 @@ try {
   $search = $query . '%';
 
   $stmt = $conn->prepare(
-    'SELECT id_menu, nama_menu
-     FROM menu
-     WHERE nama_menu LIKE ?
-     ORDER BY nama_menu ASC
+    'SELECT m.id_menu, m.nama_menu, k.nama_kantin
+     FROM menu m
+     JOIN kantin k ON k.id_kantin = m.id_kantin
+     WHERE m.nama_menu LIKE ?
+     ORDER BY m.nama_menu ASC, k.nama_kantin ASC
      LIMIT 8'
   );
   $stmt->bind_param('s', $search);
@@ -35,6 +36,8 @@ try {
     $menus[] = [
       'id_menu' => (int)$row['id_menu'],
       'nama_menu' => (string)$row['nama_menu'],
+      'nama_kantin' => (string)$row['nama_kantin'],
+      'gambar_url' => 'assets/img/kantin/kantin-make.png',
     ];
   }
 

@@ -1,0 +1,842 @@
+.kantin-detail-body {
+  padding-top: 0;
+  background: #fafafa;
+  overflow-x: hidden;
+}
+
+.kantin-detail-nav {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 8px clamp(16px, 8vw, 120px);
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.18);
+}
+
+.kantin-detail-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 11px;
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.kantin-detail-brand img {
+  width: 30px;
+  height: 45px;
+  object-fit: contain;
+}
+
+.kantin-detail-links {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  flex: 1 1 auto;
+}
+
+.kantin-detail-menu-toggle {
+  display: none;
+  width: 37px;
+  height: 37px;
+  padding: 6px 4px;
+  border: 0;
+  background: transparent;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  cursor: pointer;
+}
+
+.kantin-detail-menu-toggle span {
+  display: block;
+  width: 16px;
+  height: 2px;
+  border-radius: 999px;
+  background: #444;
+}
+
+.kantin-mobile-nav {
+  display: none;
+}
+
+.kantin-detail-links a,
+.kantin-detail-user {
+  padding: 10px 16px;
+  border-radius: 12px;
+  font-size: 18px;
+}
+
+.kantin-detail-links a:hover,
+.kantin-detail-user:hover {
+  color: var(--primary);
+}
+
+.kantin-detail-user {
+  border: 1px solid #e7e7e7;
+  font-weight: 700;
+  max-width: 160px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.kantin-detail-page {
+  width: min(1204px, calc(100% - 32px));
+  margin: 0 auto;
+  padding: 92px 0 128px;
+}
+
+.kantin-detail-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 384px;
+  gap: 56px;
+  align-items: start;
+}
+
+.kantin-main-content {
+  display: grid;
+  gap: 32px;
+}
+
+.kantin-breadcrumbs {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 16px;
+  color: #111;
+}
+
+.kantin-breadcrumbs a {
+  color: inherit;
+}
+
+.kantin-profile-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.kantin-profile-thumb {
+  width: 100px;
+  height: 100px;
+  border-radius: 12px;
+  object-fit: cover;
+  flex: 0 0 auto;
+}
+
+.kantin-profile-copy {
+  display: grid;
+  gap: 8px;
+}
+
+.kantin-profile-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #4a4a4a;
+  font-size: 14px;
+}
+
+.kantin-profile-meta img {
+  width: 16px;
+  height: 16px;
+}
+
+.kantin-profile-meta p,
+.kantin-profile-copy h1 {
+  margin: 0;
+}
+
+.kantin-profile-copy h1 {
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 1.6;
+  color: #333;
+}
+
+.kantin-recommend-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  width: fit-content;
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: #ff7a00;
+  color: #fff;
+  font-size: 16px;
+}
+
+.kantin-recommend-badge img {
+  width: 24px;
+  height: 24px;
+}
+
+.kantin-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  background: #fff;
+}
+
+.kantin-stat-card {
+  padding: 0 16px;
+  min-height: 86px;
+  display: grid;
+  justify-items: center;
+  align-content: center;
+  gap: 8px;
+  border-right: 1px solid #d1d1d1;
+  text-align: center;
+}
+
+.kantin-stat-card:last-child {
+  border-right: 0;
+}
+
+.kantin-stat-value {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.kantin-stat-value strong {
+  font-size: 18px;
+}
+
+.kantin-stat-card p {
+  margin: 0;
+  color: #4a4a4a;
+  font-size: 18px;
+}
+
+.kantin-stat-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 999px;
+}
+
+.kantin-stat-icon.is-blue {
+  background: #eff6ff;
+}
+
+.kantin-stat-icon.is-orange {
+  background: #fff7ed;
+}
+
+.kantin-stat-icon img {
+  width: 24px;
+  height: 24px;
+}
+
+.kantin-menu-section {
+  display: grid;
+  gap: 24px;
+}
+
+.kantin-menu-section h2 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 28px;
+  line-height: 1.1;
+}
+
+.kantin-menu-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px;
+}
+
+.kantin-menu-empty {
+  margin: 0;
+  color: #5c5c5c;
+  font-size: 16px;
+}
+
+.kantin-menu-card {
+  padding: 16px 12px;
+  border-radius: 24px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #fff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.25);
+}
+
+.kantin-menu-image {
+  width: 150px;
+  height: 84px;
+  border-radius: 12px;
+  object-fit: contain;
+  flex: 0 0 auto;
+}
+
+.kantin-menu-copy {
+  min-width: 0;
+  flex: 1 1 auto;
+  display: grid;
+  gap: 8px;
+}
+
+.kantin-menu-copy h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1.2;
+  color: #333;
+}
+
+.kantin-menu-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.kantin-menu-bottom span {
+  font-family: "Poppins", var(--font-sans);
+  font-size: 16px;
+  color: #e97d28;
+}
+
+.kantin-add-button {
+  border: 0;
+  background: transparent;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.kantin-add-button img {
+  width: 32px;
+  height: 32px;
+}
+
+.kantin-order-panel {
+  position: sticky;
+  top: 100px;
+}
+
+.kantin-order-box {
+  padding: 24px 16px;
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.25);
+  display: grid;
+  gap: 42px;
+}
+
+.kantin-order-box h2 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.kantin-order-empty {
+  display: grid;
+  justify-items: center;
+  gap: 8px;
+  padding: 12px 0;
+  text-align: center;
+}
+
+.kantin-order-empty img {
+  width: 100px;
+  height: 100px;
+}
+
+.kantin-order-empty strong,
+.kantin-order-empty p {
+  margin: 0;
+  font-family: "Poppins", var(--font-sans);
+}
+
+.kantin-order-empty p {
+  color: #5c5c5c;
+  font-size: 14px;
+}
+
+.kantin-order-items {
+  display: grid;
+  gap: 12px;
+}
+
+.kantin-order-item {
+  display: grid;
+  grid-template-columns: 56px minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: center;
+}
+
+.kantin-order-item img {
+  width: 56px;
+  height: 56px;
+  border-radius: 10px;
+  object-fit: cover;
+  background: #f6f6f6;
+}
+
+.kantin-order-item-copy {
+  min-width: 0;
+}
+
+.kantin-order-item-copy strong,
+.kantin-order-item-copy span {
+  display: block;
+}
+
+.kantin-order-item-copy strong {
+  font-size: 14px;
+  line-height: 1.3;
+}
+
+.kantin-order-item-copy span {
+  font-family: "Poppins", var(--font-sans);
+  color: #5c5c5c;
+  font-size: 13px;
+}
+
+.kantin-order-item-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.kantin-order-item-actions button {
+  width: 28px;
+  height: 28px;
+  border: 0;
+  border-radius: 999px;
+  background: #f3f4f6;
+  color: #333;
+  font: inherit;
+  cursor: pointer;
+}
+
+.kantin-order-footer {
+  padding-top: 12px;
+  border-top: 1px solid #efefef;
+  display: grid;
+  gap: 24px;
+}
+
+.kantin-order-total {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  font-family: "Poppins", var(--font-sans);
+}
+
+.kantin-order-total span {
+  color: #5c5c5c;
+}
+
+.kantin-order-submit,
+.kantin-detail-footer-cta a {
+  min-height: 54px;
+  padding: 12px 16px;
+  border: 0;
+  border-radius: 18px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  background: #c0baba;
+  color: #fff;
+  font-family: "Poppins", var(--font-sans);
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.kantin-order-submit.is-ready {
+  background: var(--primary);
+}
+
+.kantin-detail-footer {
+  min-height: 480px;
+  padding: 116px clamp(24px, 8vw, 100px) 32px;
+  border-radius: 48px 48px 0 0;
+  background: #fff;
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.25);
+  display: flex;
+  justify-content: space-between;
+  gap: 64px;
+}
+
+.kantin-detail-footer-main {
+  display: grid;
+  align-content: space-between;
+  gap: 32px;
+}
+
+.kantin-detail-footer-cta {
+  display: grid;
+  gap: 32px;
+}
+
+.kantin-detail-footer-cta h2 {
+  margin: 0;
+  max-width: 459px;
+  font-family: var(--font-display);
+  font-size: 48px;
+  line-height: 1.1;
+  color: var(--primary);
+}
+
+.kantin-detail-footer-cta a {
+  width: 302px;
+  border-radius: 12px;
+  background: var(--primary);
+}
+
+.kantin-detail-footer-cta a img {
+  width: 18px;
+  height: 18px;
+}
+
+.kantin-detail-footer-main p {
+  margin: 0;
+  color: #5c5c5c;
+  font-style: italic;
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+.kantin-detail-footer-links {
+  display: flex;
+  gap: 96px;
+}
+
+.kantin-detail-footer-links div {
+  display: grid;
+  align-content: start;
+  gap: 16px;
+}
+
+.kantin-detail-footer-links h3 {
+  margin: 0;
+  font-size: 18px;
+}
+
+.kantin-detail-footer-links a {
+  font-size: 16px;
+  line-height: 1.6;
+  opacity: 0.9;
+}
+
+@media (max-width: 1180px) {
+  .kantin-detail-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .kantin-order-panel {
+    position: static;
+  }
+}
+
+@media (max-width: 900px) {
+  .kantin-detail-links,
+  .kantin-detail-user {
+    display: none;
+  }
+
+  .kantin-detail-menu-toggle {
+    display: inline-flex;
+  }
+
+  .kantin-stats-grid,
+  .kantin-menu-grid,
+  .kantin-detail-footer {
+    grid-template-columns: 1fr;
+  }
+
+  .kantin-stats-grid {
+    display: grid;
+  }
+
+  .kantin-stat-card {
+    border-right: 0;
+    border-bottom: 1px solid #d1d1d1;
+    padding: 16px;
+  }
+
+  .kantin-stat-card:last-child {
+    border-bottom: 0;
+  }
+
+  .kantin-detail-footer {
+    display: grid;
+  }
+}
+
+@media (max-width: 720px) {
+  .kantin-detail-body {
+    background: #fafafa;
+  }
+
+  .kantin-detail-page {
+    width: calc(100% - 24px);
+    padding: 24px 0 64px;
+  }
+
+  .kantin-detail-nav {
+    padding: 12px 16px;
+    box-shadow: 0 2px 2px rgba(0, 0, 0, 0.1);
+  }
+
+  .kantin-detail-brand {
+    gap: 8px;
+  }
+
+  .kantin-detail-brand img {
+    width: 19px;
+    height: 29px;
+  }
+
+  .kantin-detail-brand span {
+    font-size: 12px;
+  }
+
+  .kantin-mobile-nav {
+    display: grid;
+    gap: 10px;
+    padding: 12px 16px 16px;
+    background: #fff;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  }
+
+  .kantin-mobile-nav a {
+    font-size: 14px;
+    color: #333;
+  }
+
+  .kantin-detail-layout {
+    gap: 0;
+  }
+
+  .kantin-main-content {
+    gap: 24px;
+  }
+
+  .kantin-breadcrumbs {
+    gap: 8px;
+    font-size: 12px;
+  }
+
+  .kantin-profile-card {
+    gap: 16px;
+    align-items: stretch;
+  }
+
+  .kantin-profile-thumb {
+    width: 97px;
+    height: auto;
+    min-height: 96px;
+    flex: 0 0 97px;
+  }
+
+  .kantin-profile-copy {
+    gap: 8px;
+  }
+
+  .kantin-profile-meta {
+    align-items: flex-start;
+    gap: 4px;
+    font-size: 12px;
+  }
+
+  .kantin-profile-meta p {
+    line-height: 1.2;
+  }
+
+  .kantin-profile-copy h1 {
+    width: 263px;
+    max-width: 100%;
+    font-size: 18px;
+    line-height: 1.2;
+  }
+
+  .kantin-recommend-badge {
+    padding: 4px 12px;
+    font-size: 16px;
+  }
+
+  .kantin-stats-grid {
+    margin-right: -12px;
+    display: flex;
+    gap: 0;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-snap-type: x proximity;
+    background: transparent;
+    scrollbar-width: none;
+  }
+
+  .kantin-stats-grid::-webkit-scrollbar {
+    display: none;
+  }
+
+  .kantin-stat-card {
+    min-width: 138px;
+    min-height: 82px;
+    padding: 12px 16px;
+    border-right: 1px solid #d1d1d1;
+    border-bottom: 0;
+    background: #fff;
+    scroll-snap-align: start;
+  }
+
+  .kantin-stat-value strong {
+    font-size: 14px;
+  }
+
+  .kantin-stat-card p {
+    font-size: 10px;
+  }
+
+  .kantin-menu-section {
+    gap: 16px;
+  }
+
+  .kantin-menu-section h2 {
+    font-size: 24px;
+  }
+
+  .is-featured-section .kantin-menu-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px 20px;
+  }
+
+  .is-list-section .kantin-menu-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .is-featured-card {
+    padding: 16px 12px;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    border-radius: 24px;
+  }
+
+  .is-featured-card .kantin-menu-image {
+    width: 150px;
+    height: 84px;
+    object-fit: contain;
+  }
+
+  .is-featured-card .kantin-menu-copy {
+    width: 100%;
+  }
+
+  .is-featured-card .kantin-menu-copy h3 {
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 1.2;
+  }
+
+  .is-featured-card .kantin-menu-bottom span {
+    font-size: 14px;
+  }
+
+  .is-featured-card .kantin-add-button img {
+    width: 24px;
+    height: 24px;
+  }
+
+  .is-list-card {
+    min-height: 122px;
+    padding: 16px 12px;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    border-radius: 24px;
+  }
+
+  .is-list-card .kantin-menu-image {
+    width: 150px;
+    height: 84px;
+    object-fit: contain;
+  }
+
+  .is-list-card .kantin-menu-copy h3 {
+    font-size: 18px;
+    line-height: 1.15;
+  }
+
+  .is-list-card .kantin-menu-bottom span {
+    font-size: 16px;
+  }
+
+  .kantin-order-panel {
+    display: none;
+  }
+
+  .kantin-detail-footer {
+    min-height: 995px;
+    padding: 64px 24px 40px;
+    border-radius: 24px 24px 0 0;
+    display: grid;
+    justify-content: stretch;
+    gap: 56px;
+  }
+
+  .kantin-detail-footer-main {
+    gap: 24px;
+    align-content: start;
+  }
+
+  .kantin-detail-footer-cta {
+    gap: 16px;
+  }
+
+  .kantin-detail-footer-cta h2 {
+    max-width: 293px;
+    font-size: 32px;
+  }
+
+  .kantin-detail-footer-cta a {
+    width: 293px;
+    max-width: 100%;
+    min-height: 54px;
+    border-radius: 12px;
+  }
+
+  .kantin-detail-footer-main p {
+    width: 323px;
+    max-width: 100%;
+    font-size: 14px;
+  }
+
+  .kantin-detail-footer-links {
+    display: grid;
+    gap: 56px;
+  }
+
+  .kantin-detail-footer-links div {
+    gap: 10px;
+  }
+
+  .kantin-detail-footer-links h3 {
+    font-size: 18px;
+    margin-bottom: 8px;
+  }
+
+  .kantin-detail-footer-links a {
+    font-size: 16px;
+  }
+}

@@ -7,7 +7,7 @@ require_login('kantin');
 $user = current_user();
 
 $kantinCards = [
-  ['name' => "Kantin Mak'e", 'image' => 'assets/img/kantin/kantin-make.png', 'active' => true],
+  ['name' => 'Kantin PJBL', 'image' => 'assets/img/kantin/kantin-make.png', 'active' => true, 'target' => 'kantin-1'],
   ['name' => 'Kantin Belum Terdaftar', 'image' => 'assets/img/icons/not-active.svg', 'active' => false],
   ['name' => 'Kantin Belum Terdaftar', 'image' => 'assets/img/icons/not-active.svg', 'active' => false],
   ['name' => 'Kantin Belum Terdaftar', 'image' => 'assets/img/icons/not-active.svg', 'active' => false],
@@ -121,7 +121,12 @@ $benefits = [
         </div>
         <div class="kantin-card-grid">
           <?php foreach ($kantinCards as $index => $card): ?>
-            <button class="kantin-choice <?= $card['active'] ? 'is-ready' : 'is-empty' ?> <?= $index === 0 ? 'is-selected' : '' ?>" type="button" data-kantin-choice>
+            <button
+              class="kantin-choice <?= $card['active'] ? 'is-ready' : 'is-empty' ?> <?= $index === 0 ? 'is-selected' : '' ?>"
+              type="button"
+              data-kantin-choice
+              <?php if (!empty($card['target'])): ?>data-kantin-target="<?= htmlspecialchars((string)$card['target']) ?>"<?php endif; ?>
+            >
               <div class="kantin-choice-img">
                 <img src="<?= htmlspecialchars($card['image']) ?>" alt="" />
               </div>
