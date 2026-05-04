@@ -48,45 +48,52 @@
     links.forEach((a) => a.classList.toggle("is-active", a.getAttribute("href") === `#${id}`));
   };
 
-  const syncActiveFromScroll = () => {
-    if (window.scrollY < 80) {
-      setActive("beranda");
-      return;
-    }
+  let ticking = false;
 
-    let best = null;
-    let bestDist = Number.POSITIVE_INFINITY;
-    for (const s of sections) {
-      const r = s.getBoundingClientRect();
-      const dist = Math.abs(r.top - 96);
-      if (dist < bestDist) {
-        bestDist = dist;
-        best = s;
-      }
-    }
-    if (best && best.id) setActive(best.id);
+  const getNavOffset = () => {
+    const navbarHeight = navbar.getBoundingClientRect().height || 64;
+    return navbarHeight + 32;
   };
 
-  // Update active immediately on click (prevents "stuck active" feel)
+  const syncActiveFromScroll = () => {
+    const currentY = window.scrollY + getNavOffset();
+    let activeId = sections[0]?.id || "beranda";
+
+    for (const section of sections) {
+      if (section.offsetTop <= currentY) activeId = section.id;
+    }
+
+    setActive(activeId);
+    ticking = false;
+  };
+
+  const scrollToSection = (id) => {
+    const section = document.getElementById(id);
+    if (!section) return;
+
+    const top = Math.max(0, section.offsetTop - getNavOffset() + 1);
+    window.history.pushState(null, "", `#${id}`);
+    window.scrollTo({ top, behavior: "smooth" });
+  };
+
+  // Update active immediately on click and move scroll to a navbar-safe position.
   links.forEach((a) => {
-    a.addEventListener("click", () => {
+    a.addEventListener("click", (event) => {
       const href = a.getAttribute("href") || "";
-      if (href.startsWith("#")) setActive(href.slice(1));
-      window.setTimeout(syncActiveFromScroll, 350);
+      if (!href.startsWith("#")) return;
+
+      event.preventDefault();
+      const id = href.slice(1);
+      setActive(id);
+      scrollToSection(id);
     });
   });
 
-  if ("IntersectionObserver" in window && sections.length > 0) {
-    const observer = new IntersectionObserver(
-      () => syncActiveFromScroll(),
-      { rootMargin: "-20% 0px -70% 0px", threshold: [0, 0.1, 0.2] }
-    );
-    sections.forEach((s) => observer.observe(s));
-  }
-
   window.addEventListener("scroll", () => {
+    if (ticking) return;
+    ticking = true;
     window.requestAnimationFrame(syncActiveFromScroll);
-  });
+  }, { passive: true });
 
   syncActiveFromScroll();
 })();
