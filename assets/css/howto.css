@@ -1,0 +1,102 @@
+.howto {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  background: #ffffff;
+  padding: 76px 0 0;
+}
+
+.howto-inner {
+  width: 1440px;
+  padding: 0 120px;
+}
+
+.howto-head {
+  width: 835px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.howto-kicker {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.howto-bar {
+  width: 20px;
+  height: 4px;
+  background: var(--primary);
+  border-radius: 100px;
+}
+
+.howto-label {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 28px;
+  line-height: 1.1;
+  color: #000;
+}
+
+.howto-title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 48px;
+  line-height: 1.1;
+  color: #4d4d4d;
+}
+
+.howto-accent {
+  color: var(--primary);
+  text-decoration: underline;
+  text-decoration-thickness: 4px;
+  text-underline-offset: 10px;
+}
+
+.howto-steps {
+  margin-top: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 36px;
+  min-height: 647px;
+}
+
+.howto-step {
+  width: 374px;
+  height: 573px;
+  object-fit: cover;
+  border-radius: 24px;
+}
+
+@media (max-width: 1200px) {
+  .howto-inner {
+    width: 100%;
+    padding: 0 16px;
+  }
+
+  .howto-head {
+    width: 100%;
+  }
+
+  .howto-steps {
+    flex-wrap: wrap;
+    min-height: unset;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .howto-title {
+    font-size: 36px;
+  }
+
+  .howto-step {
+    width: min(374px, 100%);
+    height: auto;
+    aspect-ratio: 374 / 573;
+  }
+}
+

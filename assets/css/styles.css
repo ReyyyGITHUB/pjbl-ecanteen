@@ -1,0 +1,59 @@
+:root {
+  --primary: #ff7a00;
+  --text: #333333;
+
+  --font-sans: "Nunito Sans", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  --font-display: "Baloo 2", var(--font-sans);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  color: var(--text);
+  background: white;
+  padding-top: 64px; /* desktop navbar fixed */
+}
+
+img {
+  display: block;
+  max-width: 100%;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* A11y: visible focus only for keyboard users */
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* Motion */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    scroll-behavior: auto !important;
+    transition: none !important;
+    animation: none !important;
+  }
+}
+
+/* Prevent background scroll (used by mobile menu overlay) */
+.no-scroll {
+  overflow: hidden;
+}
+
+@media (max-width: 768px) {
+  body {
+    padding-top: 0; /* mobile navbar not fixed */
+  }
+}
