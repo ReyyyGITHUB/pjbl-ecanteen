@@ -14,12 +14,16 @@
   const input = document.querySelector("[data-kantin-search-input]");
   const results = document.querySelector("[data-kantin-search-results]");
   const notice = document.querySelector("[data-kantin-search-notice]");
+  const noticeText = document.querySelector("[data-kantin-search-notice-text]");
+  const noticeClose = document.querySelector("[data-kantin-search-notice-close]");
   const form = document.querySelector(".kantin-search");
 
-  if (!input || !results || !notice || !form) return;
+  if (!input || !results || !notice || !noticeText || !noticeClose || !form) return;
 
   let activeRequest = 0;
   let debounceTimer = null;
+  let noticeTimer = null;
+  let noticeHideTimer = null;
 
   const hideResults = () => {
     results.hidden = true;
@@ -28,17 +32,34 @@
   };
 
   const hideNotice = () => {
-    notice.hidden = true;
+    window.clearTimeout(noticeTimer);
+    window.clearTimeout(noticeHideTimer);
+
+    if (notice.hidden) return;
+
     notice.classList.remove("is-visible");
-    notice.textContent = "";
+    notice.classList.add("is-hiding");
     input.closest(".kantin-search-field")?.classList.remove("is-invalid");
+
+    noticeHideTimer = window.setTimeout(() => {
+      notice.hidden = true;
+      notice.classList.remove("is-hiding");
+      noticeText.textContent = "";
+    }, 220);
   };
 
   const showNotice = (message) => {
+    window.clearTimeout(noticeHideTimer);
+    notice.classList.remove("is-hiding");
     notice.hidden = false;
-    notice.textContent = message;
+    noticeText.textContent = message;
     notice.classList.add("is-visible");
     input.closest(".kantin-search-field")?.classList.add("is-invalid");
+
+    window.clearTimeout(noticeTimer);
+    noticeTimer = window.setTimeout(() => {
+      hideNotice();
+    }, 1500);
   };
 
   const showMessage = (message) => {
@@ -138,13 +159,18 @@
     }
   });
 
+  noticeClose.addEventListener("click", () => {
+    hideNotice();
+    input.focus();
+  });
+
   form.addEventListener("submit", (event) => {
     const keyword = input.value.trim();
 
     if (keyword.length === 0) {
       event.preventDefault();
       hideResults();
-      showNotice("Isi nama menu dulu sebelum menekan Pesan Sekarang.");
+      showNotice("Pesanan belum terisi!");
       input.focus();
       return;
     }

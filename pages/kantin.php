@@ -107,7 +107,12 @@ $benefits = [
           role="status"
           aria-live="polite"
           hidden
-        ></div>
+        >
+          <span data-kantin-search-notice-text></span>
+          <button type="button" class="kantin-search-notice-close" data-kantin-search-notice-close aria-label="Tutup notifikasi">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
       </section>
 
       <section class="kantin-section" id="pilihan-kantin">
