@@ -87,6 +87,7 @@ while ($row = $menuResult->fetch_assoc()) {
     'featured' => ((string)$row['kategori']) === 'makanan',
     'category' => (string)$row['kategori'],
     'stock' => (int)$row['sisa_stock'],
+    'disabled' => (int)$row['sisa_stock'] < 1,
   ];
 
   $allMenus[] = $menu;
@@ -210,7 +211,15 @@ $stats = [
                   <p class="kantin-menu-empty">Belum ada menu untuk kategori ini.</p>
                 <?php endif; ?>
                 <?php foreach ($section['items'] as $itemIndex => $item): ?>
-                  <article class="kantin-menu-card <?= $sectionIndex === 0 ? 'is-featured-card' : 'is-list-card' ?>" data-menu-card>
+                  <article
+                    class="kantin-menu-card <?= $sectionIndex === 0 ? 'is-featured-card' : 'is-list-card' ?> <?= $item['disabled'] ? 'is-disabled-card' : '' ?>"
+                    data-menu-card
+                    data-menu-id="<?= htmlspecialchars((string)$item['id']) ?>"
+                    data-menu-name="<?= htmlspecialchars($item['name']) ?>"
+                    data-menu-price="<?= htmlspecialchars((string)$item['price']) ?>"
+                    data-menu-image="<?= htmlspecialchars($item['image']) ?>"
+                    data-menu-stock="<?= htmlspecialchars((string)$item['stock']) ?>"
+                  >
                     <img class="kantin-menu-image" src="<?= htmlspecialchars($item['image']) ?>" alt="<?= htmlspecialchars($item['name']) ?>" />
                     <div class="kantin-menu-copy">
                       <h3><?= htmlspecialchars($item['name']) ?></h3>
@@ -224,9 +233,11 @@ $stats = [
                           data-menu-name="<?= htmlspecialchars($item['name']) ?>"
                           data-menu-price="<?= htmlspecialchars((string)$item['price']) ?>"
                           data-menu-image="<?= htmlspecialchars($item['image']) ?>"
+                          data-menu-stock="<?= htmlspecialchars((string)$item['stock']) ?>"
+                          <?= $item['disabled'] ? 'disabled aria-disabled="true"' : '' ?>
                           aria-label="Tambah <?= htmlspecialchars($item['name']) ?>"
                         >
-                          <img src="assets/img/kantin-1/<?= $item['featured'] ? 'icon-plus-orange.svg' : 'icon-plus-gray.svg' ?>" alt="" />
+                          <img src="assets/img/kantin-1/<?= $item['disabled'] ? 'icon-plus-gray.svg' : ($item['featured'] ? 'icon-plus-orange.svg' : 'icon-plus-gray.svg') ?>" alt="" />
                         </button>
                       </div>
                     </div>
@@ -240,14 +251,7 @@ $stats = [
         <aside class="kantin-order-panel" id="riwayat">
           <div class="kantin-order-box">
             <h2>Pesanan Anda</h2>
-
-            <div class="kantin-order-empty" data-order-empty>
-              <img src="assets/img/kantin-1/icon-cart-outline.svg" alt="" />
-              <strong>Pesananmu masih kosong!</strong>
-              <p>Yuk, tambahkan pesananmu!</p>
-            </div>
-
-            <div class="kantin-order-items" data-order-items hidden></div>
+            <div class="kantin-order-content" data-order-content></div>
 
             <div class="kantin-order-footer">
               <div class="kantin-order-total">
@@ -260,6 +264,17 @@ $stats = [
         </aside>
       </div>
     </main>
+
+    <button type="button" class="kantin-mobile-cartbar" data-mobile-cartbar hidden aria-label="Lihat ringkasan pesanan">
+      <span class="kantin-mobile-cartbar-copy">
+        <span class="kantin-mobile-cartbar-items" data-mobile-cartbar-items>0 Items</span>
+        <span class="kantin-mobile-cartbar-kantin"><?= htmlspecialchars(format_menu_name((string)$kantin['nama_kantin'])) ?> (Spot Paling Pojok)</span>
+      </span>
+      <span class="kantin-mobile-cartbar-totalwrap">
+        <strong class="kantin-mobile-cartbar-total" data-mobile-cartbar-total>0</strong>
+        <img src="assets/img/kantin/icon-cart.svg" alt="" />
+      </span>
+    </button>
 
     <footer class="kantin-detail-footer">
       <div class="kantin-detail-footer-main">

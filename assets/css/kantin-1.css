@@ -66,6 +66,10 @@
   display: none;
 }
 
+.kantin-mobile-nav[hidden] {
+  display: none !important;
+}
+
 .kantin-detail-links a,
 .kantin-detail-user {
   padding: 10px 16px;
@@ -90,7 +94,7 @@
 .kantin-detail-page {
   width: min(1204px, calc(100% - 32px));
   margin: 0 auto;
-  padding: 92px 0 128px;
+  padding: 48px 0 128px;
 }
 
 .kantin-detail-layout {
@@ -262,13 +266,34 @@
 }
 
 .kantin-menu-card {
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
   padding: 16px 12px;
+  border: 1px solid transparent;
   border-radius: 24px;
   display: flex;
   align-items: center;
   gap: 12px;
   background: #fff;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.25);
+  transition: background-color 140ms ease, border-color 140ms ease, box-shadow 140ms ease;
+}
+
+.kantin-menu-card:not(.is-disabled-card) {
+  cursor: pointer;
+}
+
+.kantin-menu-card:not(.is-disabled-card):active {
+  background: #f3f4f6;
+  border-color: #d1d5db;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.16);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .kantin-menu-card:not(.is-disabled-card):hover {
+    border-color: var(--primary);
+  }
 }
 
 .kantin-menu-image {
@@ -315,11 +340,43 @@
   align-items: center;
   justify-content: center;
   cursor: pointer;
+  transition: transform 180ms ease, filter 180ms ease;
 }
 
 .kantin-add-button img {
   width: 32px;
   height: 32px;
+}
+
+.kantin-add-button:disabled {
+  cursor: not-allowed;
+}
+
+.is-disabled-card {
+  background: linear-gradient(180deg, #f1f3f5 0%, #e8eaed 100%);
+  border: 1px solid #d7dbe0;
+  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.08);
+}
+
+.is-disabled-card .kantin-menu-image {
+  filter: grayscale(1);
+  opacity: 0.72;
+}
+
+.is-disabled-card .kantin-menu-copy h3,
+.is-disabled-card .kantin-menu-bottom span {
+  color: #5c5c5c;
+}
+
+.is-disabled-card .kantin-add-button {
+  width: 32px;
+  height: 32px;
+  border-radius: 999px;
+  background: #6b7280;
+}
+
+.is-disabled-card .kantin-add-button img {
+  filter: brightness(0) invert(1);
 }
 
 .kantin-order-panel {
@@ -333,7 +390,11 @@
   background: #fff;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.25);
   display: grid;
-  gap: 42px;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  gap: 24px;
+  max-height: calc(100vh - 132px);
+  transition: transform 220ms ease, box-shadow 220ms ease, border-color 220ms ease;
+  border: 1px solid transparent;
 }
 
 .kantin-order-box h2 {
@@ -341,6 +402,30 @@
   font-family: var(--font-display);
   font-size: 20px;
   font-weight: 600;
+}
+
+.kantin-order-content {
+  display: grid;
+  gap: 16px;
+  max-height: 344px;
+  min-height: 0;
+  overflow-y: auto;
+  padding-right: 6px;
+  scrollbar-width: thin;
+  scrollbar-color: #d1d5db transparent;
+}
+
+.kantin-order-content::-webkit-scrollbar {
+  width: 6px;
+}
+
+.kantin-order-content::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: #d1d5db;
+}
+
+.kantin-order-content::-webkit-scrollbar-track {
+  background: transparent;
 }
 
 .kantin-order-empty {
@@ -370,6 +455,7 @@
 .kantin-order-items {
   display: grid;
   gap: 12px;
+  align-content: start;
 }
 
 .kantin-order-item {
@@ -464,6 +550,14 @@
   background: var(--primary);
 }
 
+.kantin-mobile-cartbar {
+  display: none;
+}
+
+.kantin-mobile-cartbar {
+  transition: transform 220ms ease, box-shadow 220ms ease, background-color 220ms ease;
+}
+
 .kantin-detail-footer {
   min-height: 480px;
   padding: 116px clamp(24px, 8vw, 100px) 32px;
@@ -536,13 +630,23 @@
   opacity: 0.9;
 }
 
-@media (max-width: 1180px) {
+@media (max-width: 900px) {
   .kantin-detail-layout {
     grid-template-columns: 1fr;
   }
 
   .kantin-order-panel {
     position: static;
+  }
+
+  .kantin-order-box {
+    max-height: none;
+  }
+
+  .kantin-order-content {
+    max-height: none;
+    overflow-y: visible;
+    padding-right: 0;
   }
 }
 
@@ -587,8 +691,8 @@
   }
 
   .kantin-detail-page {
-    width: calc(100% - 24px);
-    padding: 24px 0 64px;
+    width: 100%;
+    padding: 24px 16px 64px;
   }
 
   .kantin-detail-nav {
@@ -610,11 +714,18 @@
   }
 
   .kantin-mobile-nav {
-    display: grid;
+    position: sticky;
+    top: 61px;
+    z-index: 25;
+    display: none;
     gap: 10px;
     padding: 12px 16px 16px;
     background: #fff;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  }
+
+  .kantin-mobile-nav.is-open {
+    display: grid;
   }
 
   .kantin-mobile-nav a {
@@ -623,10 +734,13 @@
   }
 
   .kantin-detail-layout {
+    min-width: 0;
     gap: 0;
   }
 
   .kantin-main-content {
+    min-width: 0;
+    width: 100%;
     gap: 24px;
   }
 
@@ -707,6 +821,9 @@
   }
 
   .kantin-menu-section {
+    min-width: 0;
+    width: 100%;
+    max-width: 100%;
     gap: 16px;
   }
 
@@ -714,8 +831,25 @@
     font-size: 24px;
   }
 
+  .is-featured-section {
+    gap: 24px;
+    overflow: hidden;
+  }
+
+  .is-featured-section h2 {
+    font-size: 28px;
+    line-height: 1.1;
+  }
+
   .is-featured-section .kantin-menu-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    display: flex;
+    flex-wrap: wrap;
+    align-items: stretch;
+    justify-content: flex-start;
+    min-width: 0;
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 100%;
     gap: 16px 20px;
   }
 
@@ -725,6 +859,12 @@
   }
 
   .is-featured-card {
+    flex: 0 0 calc((100% - 20px) / 2);
+    width: calc((100% - 20px) / 2);
+    inline-size: calc((100% - 20px) / 2);
+    min-inline-size: 0;
+    max-inline-size: calc((100% - 20px) / 2);
+    overflow: hidden;
     padding: 16px 12px;
     flex-direction: column;
     align-items: center;
@@ -734,23 +874,44 @@
   }
 
   .is-featured-card .kantin-menu-image {
-    width: 150px;
-    height: 84px;
+    flex: 0 1 auto;
+    inline-size: min(100%, 150px);
+    max-inline-size: 100%;
+    height: auto;
+    aspect-ratio: 25 / 14;
     object-fit: contain;
   }
 
   .is-featured-card .kantin-menu-copy {
-    width: 100%;
+    inline-size: 100%;
+    min-inline-size: 0;
+    max-inline-size: 100%;
   }
 
   .is-featured-card .kantin-menu-copy h3 {
     font-size: 16px;
     font-weight: 600;
     line-height: 1.2;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
+
+  .is-featured-card .kantin-menu-bottom {
+    inline-size: 100%;
+    min-inline-size: 0;
+    gap: 8px;
   }
 
   .is-featured-card .kantin-menu-bottom span {
     font-size: 14px;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .is-featured-card .kantin-add-button {
+    flex: 0 0 auto;
   }
 
   .is-featured-card .kantin-add-button img {
@@ -758,9 +919,29 @@
     height: 24px;
   }
 
+  .is-featured-card.is-disabled-card .kantin-menu-copy h3 {
+    font-weight: 600;
+    color: #5c5c5c;
+  }
+
+  .is-featured-card.is-disabled-card .kantin-menu-bottom span {
+    color: #5c5c5c;
+  }
+
+  .is-featured-card.is-disabled-card .kantin-add-button {
+    width: 24px;
+    height: 24px;
+  }
+
   .is-list-card {
-    min-height: 122px;
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    min-height: 116px;
     padding: 16px 12px;
+    column-gap: 12px;
+    row-gap: 12px;
+    flex-wrap: wrap;
     flex-direction: row;
     align-items: center;
     justify-content: center;
@@ -768,13 +949,17 @@
   }
 
   .is-list-card .kantin-menu-image {
-    width: 150px;
+    flex: 0 1 150px;
+    width: min(42%, 150px);
+    min-width: 96px;
+    max-width: 150px;
     height: 84px;
     object-fit: contain;
   }
 
   .is-list-card .kantin-menu-copy h3 {
     font-size: 18px;
+    font-weight: 700;
     line-height: 1.15;
   }
 
@@ -782,8 +967,123 @@
     font-size: 16px;
   }
 
+  .is-list-card .kantin-menu-copy {
+    width: auto;
+    min-width: 0;
+    flex: 1 1 min(182px, 100%);
+    max-width: 100%;
+  }
+
+  .is-list-card .kantin-menu-bottom {
+    width: 100%;
+    min-width: 0;
+    gap: 8px;
+  }
+
+  .is-list-card .kantin-menu-bottom span {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .is-list-card.is-disabled-card .kantin-menu-copy h3,
+  .is-list-card.is-disabled-card .kantin-menu-bottom span {
+    color: #5c5c5c;
+  }
+
   .kantin-order-panel {
     display: none;
+  }
+
+  .kantin-mobile-cartbar {
+    position: sticky;
+    bottom: 0;
+    z-index: 28;
+    width: calc(100% - 32px);
+    margin: 0 16px 8px;
+    padding: 16px 10px;
+    border: 0;
+    background: #fff;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.25);
+    display: flex;
+    align-items: flex-start;
+  }
+
+  .kantin-mobile-cartbar[hidden] {
+    display: none !important;
+  }
+
+  .kantin-mobile-cartbar-copy,
+  .kantin-mobile-cartbar-totalwrap {
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .kantin-mobile-cartbar {
+    cursor: pointer;
+  }
+
+  .kantin-mobile-cartbar::before {
+    content: "";
+    position: absolute;
+    inset: 16px 10px;
+    border-radius: 999px;
+    background: #ff7a00;
+    z-index: 0;
+  }
+
+  .kantin-mobile-cartbar-copy,
+  .kantin-mobile-cartbar-totalwrap {
+    position: relative;
+    z-index: 1;
+  }
+
+  .kantin-mobile-cartbar {
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .kantin-mobile-cartbar-copy {
+    width: 244px;
+    max-width: calc(100% - 108px);
+    padding-left: 22px;
+    display: grid;
+    justify-items: start;
+    gap: 4px;
+    color: #fff;
+    text-align: left;
+  }
+
+  .kantin-mobile-cartbar-items {
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 1;
+  }
+
+  .kantin-mobile-cartbar-kantin {
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1.1;
+  }
+
+  .kantin-mobile-cartbar-totalwrap {
+    padding-right: 22px;
+    gap: 8px;
+    color: #fff;
+  }
+
+  .kantin-mobile-cartbar-total {
+    font-size: 18px;
+    font-weight: 700;
+    line-height: 1;
+  }
+
+  .kantin-mobile-cartbar-totalwrap img {
+    width: 24px;
+    height: 24px;
+    filter: brightness(0) invert(1);
   }
 
   .kantin-detail-footer {
@@ -838,5 +1138,96 @@
 
   .kantin-detail-footer-links a {
     font-size: 16px;
+  }
+}
+
+@media (max-width: 399px) {
+  .is-featured-section {
+    overflow: visible;
+  }
+
+  .is-featured-section .kantin-menu-grid {
+    flex-wrap: nowrap;
+    gap: 16px;
+    margin-right: -16px;
+    padding-right: 16px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-snap-type: x proximity;
+    scrollbar-width: none;
+  }
+
+  .is-featured-section .kantin-menu-grid::-webkit-scrollbar {
+    display: none;
+  }
+
+  .is-featured-card {
+    flex: 0 0 184px;
+    width: 184px;
+    inline-size: 184px;
+    max-inline-size: 184px;
+    scroll-snap-align: start;
+  }
+
+  .is-list-card {
+    inline-size: 100%;
+    max-inline-size: 100%;
+    overflow: hidden;
+    justify-content: flex-start;
+  }
+
+  .is-list-card .kantin-menu-image {
+    flex: 0 1 min(38%, 132px);
+    inline-size: min(38%, 132px);
+    min-inline-size: 88px;
+    max-inline-size: 132px;
+  }
+
+  .is-list-card .kantin-menu-copy {
+    flex: 1 1 0;
+    min-inline-size: 0;
+    max-inline-size: 100%;
+  }
+
+  .is-list-card .kantin-menu-bottom {
+    min-inline-size: 0;
+  }
+
+  .is-list-card .kantin-menu-bottom span {
+    min-inline-size: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .is-list-card .kantin-add-button {
+    flex: 0 0 auto;
+  }
+}
+
+@media (max-width: 359px) {
+  .is-featured-section .kantin-menu-grid {
+    gap: 14px;
+  }
+
+  .is-featured-card {
+    flex-basis: 176px;
+    width: 176px;
+    inline-size: 176px;
+    max-inline-size: 176px;
+  }
+
+  .is-list-card .kantin-menu-image {
+    flex-basis: min(36%, 116px);
+    inline-size: min(36%, 116px);
+    min-inline-size: 78px;
+  }
+
+  .is-list-card .kantin-menu-copy h3 {
+    font-size: 16px;
+  }
+
+  .is-list-card .kantin-menu-bottom span {
+    font-size: 14px;
   }
 }
