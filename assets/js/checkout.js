@@ -16,6 +16,7 @@
   const CART_KEY = "ecanteenCheckoutCart";
   const DRAFT_KEY = "ecanteenCheckoutDraft";
   let selectedPickupTime = "Istirahat 1 (09:00 - 09:15)";
+  let selectedPaymentMethod = "";
   let checkoutCart = { kantinId: 1, kantinName: "Kantin Mak E", items: [] };
 
   const formatRupiah = (amount) => `Rp ${new Intl.NumberFormat("id-ID").format(amount)}`;
@@ -56,14 +57,21 @@
 
   const getTotal = () => checkoutCart.items.reduce((sum, item) => sum + item.price * item.qty, 0);
 
+  const updateSubmitState = () => {
+    const total = getTotal();
+    const canSubmit = checkoutCart.items.length > 0 && selectedPaymentMethod !== "";
+
+    submitButton.disabled = !canSubmit;
+    submitButton.textContent = `Pesan Sekarang, ${formatRupiah(total)}`;
+  };
+
   const renderEmptyState = () => {
     cartList.replaceChildren();
     cartList.hidden = true;
     totalRow.hidden = true;
     emptyState.hidden = false;
     totalText.textContent = "Rp 0";
-    submitButton.disabled = true;
-    submitButton.textContent = "Pesan Sekarang, Rp 0";
+    updateSubmitState();
   };
 
   const renderItems = () => {
@@ -71,9 +79,8 @@
     cartList.hidden = false;
     totalRow.hidden = false;
     emptyState.hidden = true;
-    submitButton.disabled = false;
     totalText.textContent = formatRupiah(total);
-    submitButton.textContent = `Pesan Sekarang, ${formatRupiah(total)}`;
+    updateSubmitState();
 
     cartList.replaceChildren(
       ...checkoutCart.items.map((item) => {
@@ -205,22 +212,25 @@
       const radio = option.querySelector('input[type="radio"]');
       if (radio) {
         radio.checked = true;
+        selectedPaymentMethod = radio.value;
       }
 
       for (const current of paymentOptions) {
         current.classList.toggle("is-selected", current === option);
       }
+
+      updateSubmitState();
     });
   }
 
   form.addEventListener("submit", (event) => {
     event.preventDefault();
-    if (!checkoutCart.items.length) return;
+    if (!checkoutCart.items.length || !selectedPaymentMethod) return;
 
     const draft = {
       pickupTime: selectedPickupTime,
       note: noteField.value.trim(),
-      paymentMethod: "qris",
+      paymentMethod: selectedPaymentMethod,
       total: getTotal(),
       items: checkoutCart.items,
     };

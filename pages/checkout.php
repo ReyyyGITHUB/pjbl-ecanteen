@@ -80,7 +80,7 @@ $user = current_user();
             <section class="checkout-payment" aria-labelledby="checkout-payment-title">
               <h3 id="checkout-payment-title">Pembayaran</h3>
               <label class="checkout-payment-option" data-payment-option>
-                <input type="radio" name="payment_method" value="qris" checked />
+                <input type="radio" name="payment_method" value="qris" />
                 <span>QRIS</span>
               </label>
               <button type="button" class="checkout-cash-button" disabled>Tunai - Bayar Langsung di Kantin</button>
