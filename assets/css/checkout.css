@@ -83,8 +83,7 @@
 }
 
 .checkout-page {
-  width: min(100%, 1240px);
-  margin: 0 auto;
+  width: 100%;
   padding: 48px 24px 96px;
 }
 
@@ -114,10 +113,9 @@
 .checkout-layout {
   margin-top: 32px;
   display: grid;
-  grid-template-columns: minmax(0, 643px) minmax(420px, 520px);
-  justify-content: space-between;
+  grid-template-columns: minmax(0, 1fr) minmax(420px, 0.8fr);
   align-items: start;
-  gap: 38px;
+  gap: 16px;
 }
 
 .checkout-cart-card,
@@ -404,7 +402,7 @@
 .checkout-payment-option {
   position: relative;
   min-height: 54px;
-  padding: 16px 10px;
+  padding: 16px 16px;
   border: 1px solid rgba(0, 0, 0, 0.25);
   border-radius: 12px;
   display: flex;
@@ -468,7 +466,7 @@
 
 .checkout-cash-button {
   width: 100%;
-  padding: 16px 10px;
+  padding: 16px 16px;
   border: 1px solid rgba(0, 0, 0, 0.25);
   border-radius: 12px;
   background: #fff;
@@ -543,8 +541,8 @@
   }
 
   .checkout-page {
-    width: min(100%, 412px);
-    padding: 52px 12px 96px;
+    width: 100%;
+    padding: 32px 12px 96px;
   }
 
   .checkout-back {
@@ -566,7 +564,7 @@
   .checkout-layout {
     margin-top: 26px;
     grid-template-columns: 1fr;
-    gap: 32px;
+    gap: 16px;
   }
 
   .checkout-info-card,
