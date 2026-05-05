@@ -31,6 +31,11 @@ $user = current_user();
       <a class="checkout-user" href="logout" title="Logout">
         <?= htmlspecialchars((string)($user['username'] ?? 'user')) ?>
       </a>
+      <button type="button" class="checkout-menu-toggle" aria-label="Buka menu">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
     </header>
 
     <main class="checkout-page">
@@ -79,11 +84,22 @@ $user = current_user();
 
             <section class="checkout-payment" aria-labelledby="checkout-payment-title">
               <h3 id="checkout-payment-title">Pembayaran</h3>
+              <button type="button" class="checkout-cash-button" disabled>Tunai - Bayar Langsung di Kantin</button>
               <label class="checkout-payment-option" data-payment-option>
                 <input type="radio" name="payment_method" value="qris" />
                 <span>QRIS</span>
+                <span class="checkout-qris-icons" aria-hidden="true">
+                  <span class="checkout-qris-icon is-square">
+                    <img src="assets/img/checkout/qris-dana.png" alt="" />
+                  </span>
+                  <span class="checkout-qris-icon is-wide">
+                    <img src="assets/img/checkout/qris-shopeepay.png" alt="" />
+                  </span>
+                  <span class="checkout-qris-icon is-compact">
+                    <img src="assets/img/checkout/qris-wallet.png" alt="" />
+                  </span>
+                </span>
               </label>
-              <button type="button" class="checkout-cash-button" disabled>Tunai - Bayar Langsung di Kantin</button>
             </section>
 
             <button type="submit" class="checkout-submit" data-checkout-submit disabled>Pesan Sekarang, Rp 0</button>
