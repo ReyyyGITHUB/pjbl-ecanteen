@@ -63,6 +63,7 @@
 
   const cart = new Map();
   let mobileSheetHideTimer = 0;
+  const checkoutCartKey = "ecanteenCheckoutCart";
 
   const formatRupiah = (amount) =>
     new Intl.NumberFormat("id-ID", {
@@ -95,6 +96,7 @@
   };
 
   const addItemToCart = (source, trigger = null) => {
+    const id = source.dataset.menuId || source.dataset.menuName;
     const name = source.dataset.menuName;
     const image = source.dataset.menuImage;
     const price = Number(source.dataset.menuPrice || 0);
@@ -108,7 +110,7 @@
       if (existing.qty >= existing.stock) return;
       existing.qty += 1;
     } else {
-      cart.set(name, { name, image, price, qty: 1, stock });
+      cart.set(name, { id, name, image, price, qty: 1, stock });
     }
 
     updateSummary();
@@ -264,7 +266,21 @@
 
   const handleCheckout = (button) => {
     if (button.disabled) return;
-    window.alert("Frontend only: alur checkout belum dihubungkan ke backend.");
+    const payload = {
+      kantinId: 1,
+      kantinName: "Kantin Mak E",
+      items: [...cart.values()].map((item) => ({
+        id: String(item.id || item.name),
+        name: item.name,
+        image: item.image,
+        price: item.price,
+        qty: item.qty,
+        stock: item.stock,
+      })),
+    };
+
+    sessionStorage.setItem(checkoutCartKey, JSON.stringify(payload));
+    window.location.href = "checkout";
   };
 
   orderSubmit.addEventListener("click", () => handleCheckout(orderSubmit));
