@@ -115,7 +115,10 @@ CREATE TABLE `payment` (
   `bukti_file_size` int(11) DEFAULT NULL,
   `wa_status` enum('pending','sent','failed') NOT NULL DEFAULT 'pending',
   `wa_error` text DEFAULT NULL,
-  `wa_sent_at` datetime DEFAULT NULL
+  `wa_sent_at` datetime DEFAULT NULL,
+  `buyer_wa_status` enum('pending','sent','failed') NOT NULL DEFAULT 'pending',
+  `buyer_wa_error` text DEFAULT NULL,
+  `buyer_wa_sent_at` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --

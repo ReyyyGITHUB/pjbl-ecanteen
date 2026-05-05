@@ -119,6 +119,24 @@ CALL add_ecanteen_column_if_missing(
   'ALTER TABLE payment ADD COLUMN wa_sent_at DATETIME NULL AFTER wa_error'
 );
 
+CALL add_ecanteen_column_if_missing(
+  'payment',
+  'buyer_wa_status',
+  'ALTER TABLE payment ADD COLUMN buyer_wa_status ENUM(''pending'',''sent'',''failed'') NOT NULL DEFAULT ''pending'' AFTER wa_sent_at'
+);
+
+CALL add_ecanteen_column_if_missing(
+  'payment',
+  'buyer_wa_error',
+  'ALTER TABLE payment ADD COLUMN buyer_wa_error TEXT NULL AFTER buyer_wa_status'
+);
+
+CALL add_ecanteen_column_if_missing(
+  'payment',
+  'buyer_wa_sent_at',
+  'ALTER TABLE payment ADD COLUMN buyer_wa_sent_at DATETIME NULL AFTER buyer_wa_error'
+);
+
 CALL add_ecanteen_index_if_missing(
   'order_pesanan',
   'idx_order_kode_pesanan',

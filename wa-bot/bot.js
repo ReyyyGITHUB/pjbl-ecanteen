@@ -88,29 +88,31 @@ app.post("/send-order", requireToken, async (req, res) => {
     return;
   }
 
-  const sellerPhone = normalizePhone(req.body.seller_phone);
+  const recipientPhone = normalizePhone(req.body.recipient_phone || req.body.seller_phone);
   const message = String(req.body.message || "").trim();
   const orderCode = String(req.body.order_code || "").trim();
   const proofPath = String(req.body.proof_absolute_path || "").trim();
 
-  if (!sellerPhone || !message || !orderCode) {
+  if (!recipientPhone || !message || !orderCode) {
     res.status(422).json({ ok: false, message: "Payload order belum lengkap." });
     return;
   }
 
-  if (!proofPath || !fs.existsSync(proofPath)) {
+  if (proofPath && !fs.existsSync(proofPath)) {
     res.status(422).json({ ok: false, message: "File bukti pembayaran tidak ditemukan." });
     return;
   }
 
   try {
-    const chatId = `${sellerPhone}@c.us`;
+    const chatId = `${recipientPhone}@c.us`;
     await client.sendMessage(chatId, message);
 
-    const media = MessageMedia.fromFilePath(proofPath);
-    await client.sendMessage(chatId, media, {
-      caption: `Bukti pembayaran ${orderCode}`,
-    });
+    if (proofPath) {
+      const media = MessageMedia.fromFilePath(proofPath);
+      await client.sendMessage(chatId, media, {
+        caption: `Bukti pembayaran ${orderCode}`,
+      });
+    }
 
     res.json({ ok: true, message: "Pesan WhatsApp terkirim." });
   } catch (error) {

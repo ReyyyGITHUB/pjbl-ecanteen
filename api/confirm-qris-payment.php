@@ -27,33 +27,87 @@ function format_rupiah(int $amount): string {
   return 'Rp ' . number_format($amount, 0, ',', '.');
 }
 
+function receipt_visible_length(string $value): int {
+  return mb_strlen(str_replace('*', '', $value), 'UTF-8');
+}
+
+function center_receipt_line(string $value, int $width): string {
+  $padding = max(0, $width - receipt_visible_length($value));
+  return str_repeat(' ', intdiv($padding, 2)) . $value;
+}
+
+function make_receipt_rule(array $lines, string $char): string {
+  $width = 28;
+  foreach ($lines as $line) {
+    $width = max($width, receipt_visible_length((string)$line));
+  }
+
+  return str_repeat($char, min(42, $width));
+}
+
 function build_receipt_message(array $order): string {
-  $lines = [
-    'Pesanan baru E-Canteen',
-    'Kode: ' . $order['order_code'],
-    'Pemesan: ' . $order['buyer_name'] . ' (' . $order['buyer_class'] . ')',
-    'No. pemesan: ' . $order['buyer_phone'],
-    'Kantin: ' . $order['kantin_name'],
-    'Waktu ambil: ' . $order['pickup_time'],
-    '',
-    'Detail pesanan:',
+  $itemLines = [];
+  foreach ($order['items'] as $item) {
+    $itemLines[] = $item['name'] . ' x' . $item['qty'];
+  }
+
+  $bodyLines = [
+    '*Kode*  : *' . $order['order_code'] . '*',
+    '*Nama*  : ' . $order['buyer_name'],
+    '*Kelas* : ' . $order['buyer_class'],
+    '*Ambil* : ' . $order['pickup_time'],
+    ...$itemLines,
+    '*Total* : *' . format_rupiah((int)$order['total']) . '*',
   ];
 
-  foreach ($order['items'] as $item) {
-    $lines[] = '- ' . $item['name'] . ' x' . $item['qty'] . ' = ' . format_rupiah($item['subtotal']);
-  }
-
-  $lines[] = '';
-  $lines[] = 'Total: ' . format_rupiah((int)$order['total']);
-
   if ($order['note'] !== '') {
-    $lines[] = 'Catatan: ' . $order['note'];
+    $bodyLines[] = 'Catatan: ' . $order['note'];
   }
 
-  $lines[] = '';
-  $lines[] = 'Bukti pembayaran terlampir.';
+  $bodyLines[] = 'Bukti pembayaran terlampir.';
 
-  return implode("\n", $lines);
+  $line = make_receipt_rule($bodyLines, '=');
+  $dash = str_repeat('-', strlen($line));
+
+  return implode("\n", [
+    $line,
+    center_receipt_line('*PESANAN BARU SNAPAN*', strlen($line)),
+    $line,
+    '*Kode*  : *' . $order['order_code'] . '*',
+    '*Nama*  : ' . $order['buyer_name'],
+    '*Kelas* : ' . $order['buyer_class'],
+    '*Ambil* : ' . $order['pickup_time'],
+    $dash,
+    ...$itemLines,
+    $dash,
+    '*Total* : *' . format_rupiah((int)$order['total']) . '*',
+    $order['note'] !== '' ? 'Catatan: ' . $order['note'] : 'Catatan: -',
+    $line,
+    'Bukti pembayaran terlampir.',
+  ]);
+}
+
+function build_buyer_confirmation_message(array $order): string {
+  $itemParts = [];
+  foreach ($order['items'] as $item) {
+    $itemParts[] = $item['qty'] . '× ' . $item['name'];
+  }
+
+  return implode("\n", [
+    '🍱 *Pesanan masuk!*',
+    '',
+    'Halo *' . $order['buyer_name'] . '*,',
+    '_Pesanan kamu sudah langsung diteruskan ke penjualnya nih_ ✅',
+    '',
+    '🧾 *Pesanan:* ' . implode(' + ', $itemParts),
+    '',
+    '🕐 *Ambil:* _' . $order['pickup_time'] . '_',
+    '🔖 *Kode:* *' . $order['order_code'] . '*',
+    '💰 *Total:* *' . format_rupiah((int)$order['total']) . '*',
+    '',
+    '_Tunjukkan kode ini saat mengambil pesanan ya._',
+    '*Selamat makan!* 🥳',
+  ]);
 }
 
 function call_whatsapp_bot(array $payload): array {
@@ -278,6 +332,7 @@ $normalizedSellerPhone = normalize_whatsapp_number($sellerPhone);
 if ($normalizedSellerPhone === '') {
   fail_json(422, 'Nomor WhatsApp penjual belum valid.');
 }
+$normalizedBuyerPhone = normalize_whatsapp_number((string)$user['no_telepon']);
 
 $orderCode = 'SNAPAN-' . str_pad((string)random_int(0, 999999), 6, '0', STR_PAD_LEFT);
 $year = date('Y');
@@ -379,21 +434,32 @@ $orderForMessage = [
 
 $message = build_receipt_message($orderForMessage);
 $botResult = call_whatsapp_bot([
-  'seller_phone' => $normalizedSellerPhone,
+  'recipient_phone' => $normalizedSellerPhone,
   'order_code' => $orderCode,
   'message' => $message,
   'proof_absolute_path' => str_replace('\\', '/', $absoluteProofPath),
 ]);
 
+$buyerMessage = build_buyer_confirmation_message($orderForMessage);
+$buyerBotResult = $normalizedBuyerPhone !== ''
+  ? call_whatsapp_bot([
+      'recipient_phone' => $normalizedBuyerPhone,
+      'order_code' => $orderCode,
+      'message' => $buyerMessage,
+    ])
+  : ['ok' => false, 'error' => 'Nomor WhatsApp pembeli belum valid.'];
+
 $waStatus = $botResult['ok'] ? 'sent' : 'failed';
 $waError = $botResult['ok'] ? null : mb_substr((string)($botResult['error'] ?? 'Bot WhatsApp gagal.'), 0, 1000, 'UTF-8');
+$buyerWaStatus = $buyerBotResult['ok'] ? 'sent' : 'failed';
+$buyerWaError = $buyerBotResult['ok'] ? null : mb_substr((string)($buyerBotResult['error'] ?? 'Bot WhatsApp pembeli gagal.'), 0, 1000, 'UTF-8');
 
 if ($waStatus === 'sent') {
-  $updateStmt = $conn->prepare("UPDATE payment SET wa_status = 'sent', wa_error = NULL, wa_sent_at = NOW() WHERE id_payment = ?");
-  $updateStmt->bind_param('i', $paymentId);
+  $updateStmt = $conn->prepare("UPDATE payment SET wa_status = 'sent', wa_error = NULL, wa_sent_at = NOW(), buyer_wa_status = ?, buyer_wa_error = ?, buyer_wa_sent_at = " . ($buyerWaStatus === 'sent' ? 'NOW()' : 'NULL') . " WHERE id_payment = ?");
+  $updateStmt->bind_param('ssi', $buyerWaStatus, $buyerWaError, $paymentId);
 } else {
-  $updateStmt = $conn->prepare("UPDATE payment SET wa_status = 'failed', wa_error = ?, wa_sent_at = NULL WHERE id_payment = ?");
-  $updateStmt->bind_param('si', $waError, $paymentId);
+  $updateStmt = $conn->prepare("UPDATE payment SET wa_status = 'failed', wa_error = ?, wa_sent_at = NULL, buyer_wa_status = ?, buyer_wa_error = ?, buyer_wa_sent_at = " . ($buyerWaStatus === 'sent' ? 'NOW()' : 'NULL') . " WHERE id_payment = ?");
+  $updateStmt->bind_param('sssi', $waError, $buyerWaStatus, $buyerWaError, $paymentId);
 }
 $updateStmt->execute();
 $updateStmt->close();
@@ -407,6 +473,8 @@ respond_json(200, [
   'total' => $total,
   'wa_status' => $waStatus,
   'wa_error' => $waError,
+  'buyer_wa_status' => $buyerWaStatus,
+  'buyer_wa_error' => $buyerWaError,
   'manual_whatsapp_url' => $manualUrl,
   'proof_path' => $relativeProofPath,
 ]);
