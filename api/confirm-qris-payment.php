@@ -15,6 +15,15 @@ function fail_json(int $status, string $message, array $extra = []): void {
   respond_json($status, array_merge(['ok' => false, 'message' => $message], $extra));
 }
 
+function current_api_url(string $fileName): string {
+  $isHttps = !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off';
+  $scheme = $isHttps ? 'https' : 'http';
+  $host = (string)($_SERVER['HTTP_HOST'] ?? '127.0.0.1');
+  $basePath = rtrim(str_replace('\\', '/', dirname(dirname($_SERVER['SCRIPT_NAME'] ?? ''))), '/');
+
+  return $scheme . '://' . $host . $basePath . '/api/' . ltrim($fileName, '/');
+}
+
 function normalize_whatsapp_number(string $phone): string {
   $digits = preg_replace('/\D+/', '', $phone) ?? '';
   if ($digits === '') return '';
@@ -43,6 +52,25 @@ function make_receipt_rule(array $lines, string $char): string {
   }
 
   return str_repeat($char, min(42, $width));
+}
+
+function generate_order_code(mysqli $conn): string {
+  $stmt = $conn->prepare('SELECT COUNT(*) AS total FROM order_pesanan WHERE kode_pesanan = ?');
+
+  for ($attempt = 0; $attempt < 30; $attempt++) {
+    $code = 'SNAPAN-' . str_pad((string)random_int(0, 999), 3, '0', STR_PAD_LEFT);
+    $stmt->bind_param('s', $code);
+    $stmt->execute();
+    $row = $stmt->get_result()->fetch_assoc();
+
+    if ((int)($row['total'] ?? 0) === 0) {
+      $stmt->close();
+      return $code;
+    }
+  }
+
+  $stmt->close();
+  throw new RuntimeException('Kode pesanan penuh. Coba lagi beberapa saat.');
 }
 
 function build_receipt_message(array $order): string {
@@ -334,7 +362,7 @@ if ($normalizedSellerPhone === '') {
 }
 $normalizedBuyerPhone = normalize_whatsapp_number((string)$user['no_telepon']);
 
-$orderCode = 'SNAPAN-' . str_pad((string)random_int(0, 999), 3, '0', STR_PAD_LEFT);
+$orderCode = generate_order_code($conn);
 $year = date('Y');
 $month = date('m');
 $relativeDir = PAYMENT_PROOF_PUBLIC_PATH . '/' . $year . '/' . $month;
@@ -439,6 +467,8 @@ $botResult = call_whatsapp_bot([
   'order_code' => $orderCode,
   'message' => $message,
   'proof_absolute_path' => str_replace('\\', '/', $absoluteProofPath),
+  'status_poll' => true,
+  'ready_endpoint' => current_api_url('mark-order-ready.php'),
 ]);
 
 $buyerMessage = build_buyer_confirmation_message($orderForMessage);

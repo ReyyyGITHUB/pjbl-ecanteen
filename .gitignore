@@ -1,5 +1,6 @@
 /wa-bot/node_modules/
 /wa-bot/.wwebjs_auth/
 /wa-bot/.wwebjs_cache/
+/wa-bot/pending-polls.json
 /storage/payment-proofs/*
 !/storage/payment-proofs/.gitkeep
