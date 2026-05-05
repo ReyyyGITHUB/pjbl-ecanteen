@@ -57,9 +57,11 @@
   const getTotal = () => checkoutCart.items.reduce((sum, item) => sum + item.price * item.qty, 0);
 
   const renderEmptyState = () => {
+    cartList.replaceChildren();
     cartList.hidden = true;
     totalRow.hidden = true;
     emptyState.hidden = false;
+    totalText.textContent = "Rp 0";
     submitButton.disabled = true;
     submitButton.textContent = "Pesan Sekarang, Rp 0";
   };
@@ -110,7 +112,6 @@
         decrease.dataset.itemId = item.id;
         decrease.ariaLabel = `Kurangi ${item.name}`;
         decrease.textContent = "-";
-        decrease.disabled = item.qty <= 1;
 
         const quantity = document.createElement("strong");
         quantity.textContent = String(item.qty);
@@ -159,7 +160,14 @@
     const item = checkoutCart.items.find((entry) => entry.id === id);
     if (!item) return;
 
-    item.qty = Math.min(item.stock, Math.max(1, item.qty + delta));
+    const nextQty = item.qty + delta;
+    if (nextQty < 1) {
+      checkoutCart.items = checkoutCart.items.filter((entry) => entry.id !== id);
+      render();
+      return;
+    }
+
+    item.qty = Math.min(item.stock, nextQty);
     render();
   };
 

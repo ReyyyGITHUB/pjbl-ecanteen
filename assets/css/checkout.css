@@ -125,6 +125,12 @@
   gap: 8px;
 }
 
+.checkout-cart-list[hidden],
+.checkout-cart-total[hidden],
+.checkout-empty[hidden] {
+  display: none !important;
+}
+
 .checkout-cart-item {
   padding: 16px 0;
   border-bottom: 1px solid #c8c8c8;
