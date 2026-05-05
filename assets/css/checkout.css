@@ -384,6 +384,13 @@
   gap: 10px;
   color: #333;
   font-size: 16px;
+  cursor: pointer;
+  transition: border-color 160ms ease, box-shadow 160ms ease;
+}
+
+.checkout-payment-option.is-selected {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 1px var(--primary);
 }
 
 .checkout-payment-option input {
@@ -392,20 +399,25 @@
 
 .checkout-cash-button {
   width: 100%;
-  padding: 14px 18px;
-  border: 0;
+  padding: 16px 10px;
+  border: 1px solid rgba(0, 0, 0, 0.25);
   border-radius: 12px;
-  background: #c0baba;
-  color: #fff;
+  background: #fff;
+  color: #333;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
   font-family: "Poppins", var(--font-sans);
-  font-size: 15px;
-  font-weight: 500;
+  font-size: 16px;
+  font-weight: 400;
+  text-align: left;
   cursor: not-allowed;
-  opacity: 0.72;
+  opacity: 0.58;
 }
 
 .checkout-cash-button:disabled {
-  filter: grayscale(0.15);
+  background: #f7f7f7;
+  color: #6b7280;
 }
 
 .checkout-submit {

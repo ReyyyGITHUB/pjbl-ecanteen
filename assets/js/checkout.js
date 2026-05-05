@@ -7,6 +7,7 @@
   const submitButton = document.querySelector("[data-checkout-submit]");
   const noteField = document.querySelector("[data-checkout-note]");
   const pickupOptions = Array.from(document.querySelectorAll("[data-pickup-option]"));
+  const paymentOptions = Array.from(document.querySelectorAll("[data-payment-option]"));
 
   if (!cartList || !emptyState || !totalRow || !totalText || !form || !submitButton || !noteField) {
     return;
@@ -191,6 +192,19 @@
     });
   }
 
+  for (const option of paymentOptions) {
+    option.addEventListener("click", () => {
+      const radio = option.querySelector('input[type="radio"]');
+      if (radio) {
+        radio.checked = true;
+      }
+
+      for (const current of paymentOptions) {
+        current.classList.toggle("is-selected", current === option);
+      }
+    });
+  }
+
   form.addEventListener("submit", (event) => {
     event.preventDefault();
     if (!checkoutCart.items.length) return;
@@ -198,7 +212,7 @@
     const draft = {
       pickupTime: selectedPickupTime,
       note: noteField.value.trim(),
-      paymentMethod: "tunai",
+      paymentMethod: "qris",
       total: getTotal(),
       items: checkoutCart.items,
     };
