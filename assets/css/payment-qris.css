@@ -230,6 +230,12 @@
   box-shadow: 0 10px 26px rgba(51, 51, 51, 0.08);
   display: grid;
   place-items: center;
+  transition: opacity 160ms ease, filter 160ms ease;
+}
+
+.payment-qris-code.is-expired {
+  opacity: 0.45;
+  filter: grayscale(1);
 }
 
 .payment-qris-generated {
@@ -255,7 +261,8 @@
 
 .payment-qris-static-fallback[hidden],
 .payment-qris-generated[hidden],
-.payment-qris-status[hidden] {
+.payment-qris-status[hidden],
+.payment-qris-refresh[hidden] {
   display: none !important;
 }
 
@@ -274,6 +281,32 @@
   font-family: var(--font-sans);
   font-size: 13px;
   font-weight: 700;
+}
+
+.payment-qris-status.is-error {
+  color: #b42318;
+}
+
+.payment-qris-refresh {
+  min-height: 42px;
+  padding: 10px 18px;
+  border: 1px solid var(--primary);
+  border-radius: 12px;
+  background: #fff;
+  color: var(--primary);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-sans);
+  font-size: 14px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.payment-qris-refresh:hover,
+.payment-qris-refresh:focus-visible {
+  background: #fff7ed;
+  outline: none;
 }
 
 .payment-qris-guide {
@@ -497,9 +530,27 @@
 .payment-qris-error {
   color: #b42318;
   font-family: var(--font-sans);
-  font-size: 13px;
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+.payment-qris-agreement {
+  color: #333;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-family: var(--font-sans);
+  font-size: 14px;
   font-weight: 700;
   line-height: 1.45;
+  cursor: pointer;
+}
+
+.payment-qris-agreement input {
+  width: 18px;
+  height: 18px;
+  margin: 1px 0 0;
+  flex: 0 0 auto;
 }
 
 .payment-qris-submit,
@@ -635,6 +686,115 @@
   background: var(--primary);
   color: #fff;
   box-shadow: 0 16px 34px rgba(255, 122, 0, 0.22);
+}
+
+.payment-cancel-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  padding: 20px;
+  background: rgba(17, 17, 17, 0.34);
+  display: grid;
+  place-items: center;
+}
+
+.payment-cancel-modal[hidden] {
+  display: none !important;
+}
+
+.payment-cancel-dialog {
+  width: min(100%, 420px);
+  padding: 28px;
+  border: 1px solid #e7e7e7;
+  border-radius: 24px;
+  background: #fff;
+  box-shadow: 0 24px 80px rgba(17, 17, 17, 0.18);
+  display: grid;
+  gap: 18px;
+}
+
+.payment-cancel-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  background: rgba(255, 122, 0, 0.12);
+  color: var(--primary);
+  display: grid;
+  place-items: center;
+  font-family: "Inter", "Poppins", var(--font-sans);
+  font-size: 24px;
+  font-weight: 900;
+}
+
+.payment-cancel-copy {
+  display: grid;
+  gap: 6px;
+}
+
+.payment-cancel-copy h2,
+.payment-cancel-copy p {
+  margin: 0;
+}
+
+.payment-cancel-copy h2 {
+  color: #333;
+  font-size: 22px;
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+.payment-cancel-copy p {
+  color: #5c5c5c;
+  font-family: var(--font-sans);
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.55;
+}
+
+.payment-cancel-actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.payment-cancel-secondary,
+.payment-cancel-primary {
+  min-height: 50px;
+  padding: 14px 16px;
+  border-radius: 14px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: "Poppins", var(--font-sans);
+  font-size: 14px;
+  font-weight: 700;
+  text-align: center;
+}
+
+.payment-cancel-secondary {
+  border: 1px solid #d4d4d4;
+  background: #fff;
+  color: #333;
+  cursor: pointer;
+}
+
+.payment-cancel-primary {
+  border: 1px solid var(--primary);
+  background: var(--primary);
+  color: #fff;
+}
+
+.payment-cancel-secondary:hover,
+.payment-cancel-secondary:focus-visible {
+  border-color: rgba(255, 122, 0, 0.45);
+  color: var(--primary);
+  outline: none;
+}
+
+.payment-cancel-primary:hover,
+.payment-cancel-primary:focus-visible {
+  background: #ec7100;
+  outline: none;
 }
 
 @media (min-width: 900px) {
@@ -804,6 +964,10 @@
   }
 
   .payment-success-actions {
+    grid-template-columns: 1fr;
+  }
+
+  .payment-cancel-actions {
     grid-template-columns: 1fr;
   }
 }

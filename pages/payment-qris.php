@@ -54,7 +54,7 @@ $basePath = rtrim(str_replace('\\', '/', dirname(dirname($_SERVER['SCRIPT_NAME']
                   <path d="M12 7v5l3 2" />
                   <path d="M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
                 </svg>
-                <span data-payment-countdown>59:42</span>
+                <span data-payment-countdown>05:00</span>
               </span>
             </div>
           </div>
@@ -65,6 +65,7 @@ $basePath = rtrim(str_replace('\\', '/', dirname(dirname($_SERVER['SCRIPT_NAME']
               <img class="payment-qris-static-fallback" src="<?= htmlspecialchars($basePath, ENT_QUOTES, 'UTF-8') ?>/assets/img/checkout/qris-static.png" alt="QRIS Kantin Mak'e" width="250" height="352" data-qris-fallback />
             </div>
             <p class="payment-qris-status" data-qris-status aria-live="polite">Menyiapkan QRIS dinamis sesuai nominal pesanan...</p>
+            <button class="payment-qris-refresh" type="button" data-qris-refresh hidden>Refresh QRIS</button>
             <p>Scan dengan E-Wallet atau M-Banking</p>
           </div>
         </div>
@@ -135,6 +136,12 @@ $basePath = rtrim(str_replace('\\', '/', dirname(dirname($_SERVER['SCRIPT_NAME']
               <p class="payment-qris-error" id="payment-proof-error" data-proof-error aria-live="polite" hidden>Pilih gambar bukti pembayaran terlebih dahulu.</p>
             </div>
 
+            <label class="payment-qris-agreement">
+              <input type="checkbox" data-payment-agreement />
+              <span>Saya sudah memastikan nominal benar dan setuju membeli serta membayar pesanan ini.</span>
+            </label>
+            <p class="payment-qris-error" data-agreement-error aria-live="polite" hidden>Centang persetujuan sebelum mengonfirmasi pembayaran.</p>
+
             <button class="payment-qris-submit" type="submit">Sudah Membayar</button>
           </form>
         </div>
@@ -153,6 +160,20 @@ $basePath = rtrim(str_replace('\\', '/', dirname(dirname($_SERVER['SCRIPT_NAME']
           <a class="payment-success-primary" href="<?= htmlspecialchars($basePath, ENT_QUOTES, 'UTF-8') ?>/kantin-1">Mau Jajan Lagi?</a>
         </div>
       </section>
+
+      <div class="payment-cancel-modal" data-cancel-modal hidden>
+        <div class="payment-cancel-dialog" role="dialog" aria-modal="true" aria-labelledby="payment-cancel-title" aria-describedby="payment-cancel-desc">
+          <div class="payment-cancel-icon" aria-hidden="true">!</div>
+          <div class="payment-cancel-copy">
+            <h2 id="payment-cancel-title">Batalkan pesanan?</h2>
+            <p id="payment-cancel-desc">Pesanan belum dikonfirmasi. Kalau dibatalkan, kamu akan kembali ke halaman checkout.</p>
+          </div>
+          <div class="payment-cancel-actions">
+            <button class="payment-cancel-secondary" type="button" data-cancel-close>Tetap bayar</button>
+            <a class="payment-cancel-primary" href="<?= htmlspecialchars($basePath, ENT_QUOTES, 'UTF-8') ?>/checkout" data-cancel-confirm>Batalkan pesanan</a>
+          </div>
+        </div>
+      </div>
     </main>
 
     <script src="<?= htmlspecialchars($basePath, ENT_QUOTES, 'UTF-8') ?>/assets/js/vendor/jsQR.min.js" defer></script>
