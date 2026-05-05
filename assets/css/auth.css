@@ -293,6 +293,34 @@ body {
   color: #9b9b9b;
 }
 
+.field-control-phone .field-icon {
+  left: 12px;
+}
+
+.field-phone-prefix {
+  position: absolute;
+  left: 38px;
+  height: 28px;
+  padding: 0 10px;
+  border-right: 1px solid #d6d6d6;
+  color: #333;
+  display: inline-flex;
+  align-items: center;
+  font-family: var(--font-sans);
+  font-size: 14px;
+  font-weight: 800;
+  pointer-events: none;
+}
+
+.field-input-phone {
+  padding-left: 88px;
+}
+
+.field-control-phone:focus-within .field-phone-prefix {
+  border-color: rgba(255, 122, 0, 0.45);
+  color: var(--primary);
+}
+
 .field-input-invalid {
   border-color: rgba(198, 40, 40, 0.8) !important;
   box-shadow: 0 0 0 4px rgba(198, 40, 40, 0.12) !important;
@@ -505,8 +533,19 @@ body {
 }
 
 @media (max-width: 420px) {
+  body {
+    overflow-y: auto;
+  }
+
+  .auth-page {
+    min-height: 100%;
+    height: auto;
+    place-items: start center;
+  }
+
   .auth-card {
     padding: 16px;
+    max-height: none;
   }
   .triple {
     grid-template-columns: 1fr;

@@ -8,6 +8,7 @@
   const error = document.querySelector("[data-proof-error]");
   const agreementInput = document.querySelector("[data-payment-agreement]");
   const agreementError = document.querySelector("[data-agreement-error]");
+  const submitButton = document.querySelector(".payment-qris-submit");
   const downloadButton = document.querySelector("[data-download-proof]");
   const totalText = document.querySelector("[data-payment-total]");
   const countdownText = document.querySelector("[data-payment-countdown]");
@@ -31,6 +32,7 @@
     !error ||
     !agreementInput ||
     !agreementError ||
+    !submitButton ||
     !downloadButton ||
     !totalText ||
     !countdownText ||
@@ -53,6 +55,7 @@
   const PAYMENT_TIMER_SIGNATURE_KEY = "ecanteenPaymentQrisTimerSignature";
   const QRIS_STATIC_CODE_KEY = "ecanteenQrisStaticCode";
   const QRIS_VALIDITY_MS = 5 * 60 * 1000;
+  const basePath = window.location.pathname.replace(/\/payment-qris\/?$/, "");
   let selectedProof = null;
   let proofObjectUrl = "";
   let countdownTimer = 0;
@@ -302,6 +305,38 @@
     clearError();
   };
 
+  const setSubmitLoading = (isLoading) => {
+    submitButton.disabled = isLoading;
+    submitButton.classList.toggle("is-loading", isLoading);
+    submitButton.textContent = isLoading ? "Menyimpan pembayaran..." : "Sudah Membayar";
+  };
+
+  const submitPaymentProof = async () => {
+    const draft = readDraft();
+    const formData = new FormData();
+
+    formData.append("proof", selectedProof);
+    formData.append(
+      "draft",
+      JSON.stringify({
+        ...draft,
+        paymentMethod: "qris",
+      })
+    );
+
+    const response = await fetch(`${basePath}/api/confirm-qris-payment.php`, {
+      method: "POST",
+      body: formData,
+    });
+    const data = await response.json().catch(() => ({}));
+
+    if (!response.ok || !data.ok) {
+      throw new Error(data.message || "Pembayaran gagal disimpan.");
+    }
+
+    return data;
+  };
+
   input.addEventListener("change", () => {
     setProof(input.files?.[0]);
   });
@@ -332,7 +367,7 @@
     setProof(event.dataTransfer?.files?.[0]);
   });
 
-  form.addEventListener("submit", (event) => {
+  form.addEventListener("submit", async (event) => {
     event.preventDefault();
 
     if (qrisExpired) {
@@ -356,22 +391,32 @@
 
     clearProofObjectUrl();
     proofObjectUrl = URL.createObjectURL(selectedProof);
+    setSubmitLoading(true);
 
-    sessionStorage.setItem(
-      PAYMENT_KEY,
-      JSON.stringify({
-        status: "confirmed_frontend_only",
-        proofFileName: selectedProof.name,
-        proofFileType: selectedProof.type,
-        proofFileSize: selectedProof.size,
-        confirmedAt: new Date().toISOString(),
-      })
-    );
+    try {
+      const result = await submitPaymentProof();
+      sessionStorage.setItem(
+        PAYMENT_KEY,
+        JSON.stringify({
+          status: "confirmed",
+          proofFileName: selectedProof.name,
+          proofFileType: selectedProof.type,
+          proofFileSize: selectedProof.size,
+          confirmedAt: new Date().toISOString(),
+          ...result,
+        })
+      );
 
-    window.clearInterval(countdownTimer);
-    paymentScreen.hidden = true;
-    successScreen.hidden = false;
-    downloadButton.focus();
+      sessionStorage.removeItem(DRAFT_KEY);
+      sessionStorage.removeItem(PAYMENT_DEADLINE_KEY);
+      sessionStorage.removeItem(PAYMENT_TIMER_SIGNATURE_KEY);
+      window.clearInterval(countdownTimer);
+      window.location.href = `${basePath}/payment-success?kode=${encodeURIComponent(result.order_code || "")}`;
+    } catch (submitError) {
+      setError(submitError.message || "Pembayaran gagal disimpan.");
+      dropzone.focus();
+      setSubmitLoading(false);
+    }
   });
 
   downloadButton.addEventListener("click", () => {

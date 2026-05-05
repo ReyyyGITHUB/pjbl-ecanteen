@@ -77,11 +77,15 @@ INSERT INTO `menu` (`id_menu`, `id_kantin`, `nama_menu`, `kategori`, `catatan`, 
 
 CREATE TABLE `order_pesanan` (
   `id_order_pesanan` int(11) NOT NULL,
+  `kode_pesanan` varchar(32) DEFAULT NULL,
   `id_menu` int(11) NOT NULL,
   `id_user` int(11) NOT NULL,
   `jumlah` int(11) NOT NULL,
   `tanggal_pesanan` date NOT NULL,
-  `status_pesanan` enum('diproses','siap_diambil','','') NOT NULL
+  `status_pesanan` enum('diproses','siap_diambil') NOT NULL,
+  `waktu_pengambilan` varchar(80) DEFAULT NULL,
+  `catatan` text DEFAULT NULL,
+  `created_at` datetime NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -101,10 +105,17 @@ INSERT INTO `order_pesanan` (`id_order_pesanan`, `id_menu`, `id_user`, `jumlah`,
 CREATE TABLE `payment` (
   `id_payment` int(11) NOT NULL,
   `id_order_pesanan` int(11) NOT NULL,
+  `kode_pesanan` varchar(32) DEFAULT NULL,
   `total_pembayaran` int(11) NOT NULL,
-  `metode_pembayaran` enum('cash','qris','','') NOT NULL,
-  `status_pembayaran` enum('menunggu_konfirmasi','pembayaran_dikonfirmasi','','') NOT NULL,
-  `bukti_pembayaran` varchar(24) NOT NULL
+  `metode_pembayaran` enum('cash','qris') NOT NULL,
+  `status_pembayaran` enum('menunggu_konfirmasi','pembayaran_dikonfirmasi') NOT NULL,
+  `bukti_pembayaran` varchar(255) NOT NULL,
+  `bukti_original_name` varchar(255) DEFAULT NULL,
+  `bukti_mime_type` varchar(100) DEFAULT NULL,
+  `bukti_file_size` int(11) DEFAULT NULL,
+  `wa_status` enum('pending','sent','failed') NOT NULL DEFAULT 'pending',
+  `wa_error` text DEFAULT NULL,
+  `wa_sent_at` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -186,6 +197,7 @@ ALTER TABLE `menu`
 --
 ALTER TABLE `order_pesanan`
   ADD PRIMARY KEY (`id_order_pesanan`),
+  ADD KEY `idx_order_kode_pesanan` (`kode_pesanan`),
   ADD KEY `fk_order_menu` (`id_menu`),
   ADD KEY `fk_order_user` (`id_user`);
 
@@ -194,6 +206,7 @@ ALTER TABLE `order_pesanan`
 --
 ALTER TABLE `payment`
   ADD PRIMARY KEY (`id_payment`),
+  ADD KEY `idx_payment_kode_pesanan` (`kode_pesanan`),
   ADD KEY `fk_payment_order` (`id_order_pesanan`);
 
 --

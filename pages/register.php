@@ -50,14 +50,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $kelas = trim((string)($_POST['kelas'] ?? ''));
     $jurusan = trim((string)($_POST['jurusan'] ?? ''));
     $noKelas = trim((string)($_POST['no_kelas'] ?? ''));
-    $phone = trim((string)($_POST['phone'] ?? ''));
+    $phoneDigits = preg_replace('/\D+/', '', (string)($_POST['phone'] ?? '')) ?? '';
+    $phoneDigits = ltrim($phoneDigits, '0');
+    $phone = '62' . $phoneDigits;
 
     if ($fullName === '') {
       $error = 'Nama lengkap wajib diisi.';
     } elseif ($kelas === '' || $jurusan === '' || $noKelas === '') {
       $error = 'Kelas & jurusan wajib lengkap.';
-    } elseif (strlen(preg_replace('/\D+/', '', $phone)) <= 12) {
-      $error = 'Nomor telepon minimal 13 digit.';
+    } elseif (strlen($phoneDigits) < 10 || strlen($phoneDigits) > 13) {
+      $error = 'Nomor telepon harus 10 sampai 13 digit setelah +62.';
     } else {
       $kelasJurusan = strtolower($kelas . '_' . $jurusan . '_' . $noKelas);
 
@@ -124,7 +126,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <path d="M4.5 20.25c1.7-4 13.3-4 15 0" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
                   </svg>
                 </span>
-                <input class="field-input" name="username" type="text" autocomplete="username" required placeholder="Contoh: @rayhan01" />
+                <input class="field-input" name="username" type="text" autocomplete="username" required placeholder="Contoh: @username123" />
               </div>
             </label>
 
@@ -217,13 +219,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             <label class="field">
               <span class="field-label">Nomor Telepon</span>
-              <div class="field-control">
+              <div class="field-control field-control-phone">
                 <span class="field-icon" aria-hidden="true">
                   <svg viewBox="0 0 24 24" width="18" height="18" fill="none">
                     <path d="M8.2 6.75 6.9 5.45a2 2 0 0 0-2.83 0l-.7.7a2.1 2.1 0 0 0-.5 2.2c1.3 3.8 4.2 8.3 8.4 12.4s8.6 7.1 12.4 8.4a2.1 2.1 0 0 0 2.2-.5l.7-.7a2 2 0 0 0 0-2.83l-1.3-1.3a2 2 0 0 0-2.1-.47l-2.2.73a2 2 0 0 1-2.08-.5l-2.8-2.8a2 2 0 0 1-.5-2.08l.73-2.2A2 2 0 0 0 15.9 14l-1.3-1.3" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
                   </svg>
                 </span>
-                <input class="field-input" name="phone" type="tel" autocomplete="tel" inputmode="tel" required placeholder="Contoh: 0812345678901" />
+                <span class="field-phone-prefix" aria-hidden="true">+62</span>
+                <input class="field-input field-input-phone" name="phone" type="tel" autocomplete="tel" inputmode="numeric" minlength="10" maxlength="13" pattern="[1-9][0-9]{9,12}" required placeholder="812345678901" data-phone-local />
               </div>
             </label>
 

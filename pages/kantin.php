@@ -176,7 +176,7 @@ $benefits = [
         <div class="kantin-card-grid">
           <?php foreach ($kantinCards as $index => $card): ?>
             <button
-              class="kantin-choice <?= $card['active'] ? 'is-ready' : 'is-empty' ?> <?= $index === 0 ? 'is-selected' : '' ?>"
+              class="kantin-choice <?= $card['active'] ? 'is-ready' : 'is-empty' ?>"
               type="button"
               data-kantin-choice
               <?php if (!empty($card['target'])): ?>data-kantin-target="<?= htmlspecialchars((string)$card['target']) ?>"<?php endif; ?>

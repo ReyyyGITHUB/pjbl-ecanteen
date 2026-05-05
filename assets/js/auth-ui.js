@@ -20,6 +20,23 @@
   }
 
   const forms = Array.from(document.querySelectorAll("form.auth-form"));
+  const phoneInputs = Array.from(document.querySelectorAll("[data-phone-local]"));
+
+  const normalizeLocalPhone = (input) => {
+    const digits = input.value.replace(/\D+/g, "").replace(/^0+/, "").slice(0, 13);
+    input.value = digits;
+  };
+
+  for (const input of phoneInputs) {
+    input.addEventListener("input", () => {
+      normalizeLocalPhone(input);
+    });
+
+    input.addEventListener("paste", () => {
+      window.requestAnimationFrame(() => normalizeLocalPhone(input));
+    });
+  }
+
   for (const form of forms) {
     form.addEventListener(
       "invalid",
@@ -42,4 +59,3 @@
     );
   }
 })();
-

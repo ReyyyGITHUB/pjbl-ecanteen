@@ -228,6 +228,8 @@
     if (!checkoutCart.items.length || !selectedPaymentMethod) return;
 
     const draft = {
+      kantinId: checkoutCart.kantinId,
+      kantinName: checkoutCart.kantinName,
       pickupTime: selectedPickupTime,
       note: noteField.value.trim(),
       paymentMethod: selectedPaymentMethod,

@@ -1,0 +1,15 @@
+{
+  "name": "ecanteen-wa-bot",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Local WhatsApp Web bot for E-Canteen order notifications.",
+  "main": "bot.js",
+  "scripts": {
+    "start": "node bot.js"
+  },
+  "dependencies": {
+    "express": "^4.18.3",
+    "qrcode-terminal": "^0.12.0",
+    "whatsapp-web.js": "^1.25.0"
+  }
+}
