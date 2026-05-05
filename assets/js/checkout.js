@@ -237,7 +237,8 @@
 
     sessionStorage.setItem(DRAFT_KEY, JSON.stringify(draft));
     if (selectedPaymentMethod === "qris") {
-      window.location.href = "payment-qris";
+      const basePath = window.location.pathname.replace(/\/checkout\/?$/, "");
+      window.location.href = `${basePath}/payment-qris`;
       return;
     }
 
