@@ -236,7 +236,12 @@
     };
 
     sessionStorage.setItem(DRAFT_KEY, JSON.stringify(draft));
-    window.alert("Frontend only: checkout belum terhubung ke backend.");
+    if (selectedPaymentMethod === "qris") {
+      window.location.href = "payment-qris";
+      return;
+    }
+
+    window.alert("Frontend only: metode pembayaran belum terhubung ke backend.");
   });
 
   readCart();
