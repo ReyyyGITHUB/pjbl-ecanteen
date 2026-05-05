@@ -96,7 +96,7 @@ function build_buyer_confirmation_message(array $order): string {
   return implode("\n", [
     '🍱 *Pesanan masuk!*',
     '',
-    'Halo *' . $order['buyer_name'] . '*,',
+    'Halo *' . $order['buyer_name'] . '* (@' . $order['buyer_username'] . '),',
     '_Pesanan kamu sudah langsung diteruskan ke penjualnya nih_ ✅',
     '',
     '🧾 *Pesanan:* ' . implode(' + ', $itemParts),
@@ -334,7 +334,7 @@ if ($normalizedSellerPhone === '') {
 }
 $normalizedBuyerPhone = normalize_whatsapp_number((string)$user['no_telepon']);
 
-$orderCode = 'SNAPAN-' . str_pad((string)random_int(0, 999999), 6, '0', STR_PAD_LEFT);
+$orderCode = 'SNAPAN-' . str_pad((string)random_int(0, 999), 3, '0', STR_PAD_LEFT);
 $year = date('Y');
 $month = date('m');
 $relativeDir = PAYMENT_PROOF_PUBLIC_PATH . '/' . $year . '/' . $month;
@@ -421,6 +421,7 @@ try {
 $orderForMessage = [
   'order_code' => $orderCode,
   'buyer_name' => (string)$user['nama_lengkap'],
+  'buyer_username' => (string)$user['username'],
   'buyer_class' => (string)$user['kelas_jurusan'],
   'buyer_phone' => (string)$user['no_telepon'],
   'kantin_name' => mb_convert_case(str_replace('_', ' ', $kantinName), MB_CASE_TITLE, 'UTF-8'),
