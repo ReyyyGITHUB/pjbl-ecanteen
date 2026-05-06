@@ -20,12 +20,12 @@ $user = current_user();
   </head>
   <body class="checkout-body">
     <header class="checkout-nav">
-      <a class="checkout-brand" href="index.html" aria-label="E-Canteen">
+      <a class="checkout-brand" href="./" aria-label="E-Canteen">
         <img src="assets/img/figma/logo-mark.png" alt="" />
         <span>E-Canteen</span>
       </a>
       <nav class="checkout-links" aria-label="Navigasi checkout">
-        <a href="index.html">Beranda</a>
+        <a href="./">Beranda</a>
         <a href="kantin">Pilihan Kantin</a>
       </nav>
       <a class="checkout-user" href="logout" title="Logout">

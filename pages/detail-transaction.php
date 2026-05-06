@@ -41,7 +41,7 @@ $transaction = null;
 $items = [];
 $proofUrl = '';
 $backHref = $basePath . '/payment-success' . ($orderCode !== '' ? '?kode=' . rawurlencode($orderCode) : '');
-$homeHref = $basePath . '/index.html';
+$homeHref = $basePath . '/';
 
 if ($orderCode !== '' && (int)($current['id_user'] ?? 0) > 0) {
   $conn = db();

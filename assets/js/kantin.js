@@ -69,6 +69,14 @@
   let noticeTimer = null;
   let noticeHideTimer = null;
   let selectedMenuName = "";
+  let selectedTargetUrl = "";
+
+  const formatRupiah = (value) =>
+    new Intl.NumberFormat("id-ID", {
+      style: "currency",
+      currency: "IDR",
+      maximumFractionDigits: 0,
+    }).format(Number(value || 0));
 
   const hideResults = () => {
     results.hidden = true;
@@ -91,11 +99,26 @@
       button.type = "button";
       button.className = "kantin-search-result-item";
       button.dataset.menuName = item.nama_menu;
-      button.innerHTML = `
-        <img class="kantin-search-result-media" src="${item.gambar_url}" alt="${item.nama_kantin}">
-        <span class="kantin-search-result-main">${item.nama_menu}</span>
-        <span class="kantin-search-result-meta">${item.nama_kantin}</span>
-      `;
+      button.dataset.targetUrl = item.target_url || "kantin-1";
+
+      const image = document.createElement("img");
+      image.className = "kantin-search-result-media";
+      image.src = item.gambar_url || "assets/img/kantin-1/menu-ayam.png";
+      image.alt = item.nama_kantin || "";
+
+      const copy = document.createElement("span");
+      copy.className = "kantin-search-result-copy";
+
+      const title = document.createElement("span");
+      title.className = "kantin-search-result-main";
+      title.textContent = item.nama_menu || "Menu";
+
+      const meta = document.createElement("span");
+      meta.className = "kantin-search-result-meta";
+      meta.textContent = `${item.nama_kantin || "Kantin"} • ${formatRupiah(item.harga)} • Stok ${item.sisa_stock || 0}`;
+
+      copy.append(title, meta);
+      button.append(image, copy);
       results.appendChild(button);
     }
 
@@ -106,9 +129,10 @@
   const fetchResults = async (keyword) => {
     activeRequest += 1;
     const requestId = activeRequest;
+    const query = keyword ? `q=${encodeURIComponent(keyword)}` : "mode=recommend";
 
     try {
-      const response = await fetch(`api/search-menu.php?q=${encodeURIComponent(keyword)}`, {
+      const response = await fetch(`api/search-menu.php?${query}`, {
         headers: {
           Accept: "application/json",
         },
@@ -164,19 +188,28 @@
     const keyword = input.value.trim();
     if (keyword !== selectedMenuName) {
       selectedMenuName = "";
+      selectedTargetUrl = "";
     }
 
     window.clearTimeout(debounceTimer);
 
     if (keyword.length === 0) {
       hideNotice();
-      hideResults();
+      fetchResults("");
       return;
     }
 
     debounceTimer = window.setTimeout(() => {
       fetchResults(keyword);
     }, 180);
+  });
+
+  input.addEventListener("focus", () => {
+    if (input.value.trim().length === 0) fetchResults("");
+  });
+
+  input.addEventListener("click", () => {
+    if (input.value.trim().length === 0) fetchResults("");
   });
 
   input.addEventListener("keydown", (event) => {
@@ -196,9 +229,10 @@
     if (!target) return;
 
     selectedMenuName = target.dataset.menuName || "";
+    selectedTargetUrl = target.dataset.targetUrl || "kantin-1";
     input.value = selectedMenuName;
     hideResults();
-    input.focus();
+    window.location.href = selectedTargetUrl;
   });
 
   document.addEventListener("click", (event) => {
@@ -211,8 +245,9 @@
 
     if (keyword.length === 0) {
       event.preventDefault();
-      showNotice("Pesanan belum terisi!");
+      showNotice("Pilih menu dari rekomendasi dulu.");
       input.focus();
+      fetchResults("");
       return;
     }
 
@@ -226,6 +261,6 @@
     event.preventDefault();
     hideResults();
     hideNotice();
-    window.location.href = "kantin-1";
+    window.location.href = selectedTargetUrl || "kantin-1";
   });
 })();

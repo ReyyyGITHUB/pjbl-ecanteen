@@ -55,7 +55,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <main class="auth-page auth-page-plain">
       <section class="auth-plain" aria-label="Login">
         <header class="auth-plain-head">
-          <a class="auth-plain-logo" href="index.html" aria-label="Kembali ke Beranda">
+          <a class="auth-plain-logo" href="./" aria-label="Kembali ke Beranda">
             <img class="auth-plain-logo-mark" src="assets/img/figma/logo-mark.png" alt="" />
             <span class="auth-plain-logo-name">E-Canteen</span>
           </a>
@@ -97,7 +97,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
           <p class="auth-error" role="alert" aria-live="polite"><?= htmlspecialchars($error) ?></p>
 
           <div class="auth-plain-actions auth-plain-actions-cta">
-            <a class="auth-secondary auth-plain-back" href="index.html">Back</a>
+            <a class="auth-secondary auth-plain-back" href="./">Back</a>
             <button class="auth-btn auth-plain-submit" type="submit">Login</button>
           </div>
 

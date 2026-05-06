@@ -100,12 +100,12 @@ $benefits = [
   </head>
   <body class="kantin-body">
     <header class="kantin-nav">
-      <a class="kantin-brand" href="index.html" aria-label="E-Canteen">
+      <a class="kantin-brand" href="./" aria-label="E-Canteen">
         <img src="assets/img/figma/logo-mark.png" alt="" />
         <span>E-Canteen</span>
       </a>
       <nav class="kantin-links" aria-label="Navigasi kantin">
-        <a href="index.html">Beranda</a>
+        <a href="./">Beranda</a>
         <a href="#pilihan-kantin">Pilihan Kantin</a>
         <a href="#riwayat">Riwayat Pembelian</a>
       </nav>
@@ -305,7 +305,7 @@ $benefits = [
       </div>
       <p>Copyright &copy; 2025 Kelompok 1 XPPLG2 SMKN 8 Semarang. All Rights Reserved.</p>
       <nav aria-label="Footer link">
-        <a href="index.html">Beranda</a>
+        <a href="./">Beranda</a>
         <a href="#pilihan-kantin">Pilih Kantin</a>
         <a href="logout">Logout</a>
       </nav>

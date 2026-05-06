@@ -141,12 +141,12 @@ $stats = [
   </head>
   <body class="kantin-detail-body">
     <header class="kantin-detail-nav">
-      <a class="kantin-detail-brand" href="index.html" aria-label="E-Canteen">
+      <a class="kantin-detail-brand" href="./" aria-label="E-Canteen">
         <img src="assets/img/figma/logo-mark.png" alt="" />
         <span>E-Canteen</span>
       </a>
       <nav class="kantin-detail-links" aria-label="Navigasi kantin">
-        <a href="index.html">Beranda</a>
+        <a href="./">Beranda</a>
         <a href="kantin">Pilihan Kantin</a>
         <a href="#riwayat">Riwayat Pembelian</a>
       </nav>
@@ -160,7 +160,7 @@ $stats = [
       </a>
     </header>
     <nav class="kantin-mobile-nav" id="kantin-mobile-nav" aria-label="Navigasi seluler" hidden>
-      <a href="index.html">Beranda</a>
+      <a href="./">Beranda</a>
       <a href="kantin">Pilihan Kantin</a>
       <a href="#riwayat">Riwayat Pembelian</a>
       <a href="logout">Logout</a>
@@ -170,7 +170,7 @@ $stats = [
       <div class="kantin-detail-layout">
         <section class="kantin-main-content">
           <div class="kantin-breadcrumbs" aria-label="Breadcrumb">
-            <a href="index.html">Beranda</a>
+            <a href="./">Beranda</a>
             <span>/</span>
             <a href="kantin">Kantin</a>
             <span>/</span>
@@ -328,10 +328,10 @@ $stats = [
       <div class="kantin-detail-footer-links">
         <div>
           <h3>Link to</h3>
-          <a href="index.html">Beranda</a>
-          <a href="index.html#tentang">Tentang</a>
-          <a href="index.html#cara-pakai">Cara Pakai</a>
-          <a href="index.html#testimoni">Testimoni</a>
+          <a href="./">Beranda</a>
+          <a href="./#tentang">Tentang</a>
+          <a href="./#cara-pakai">Cara Pakai</a>
+          <a href="./#testimoni">Testimoni</a>
           <a href="kantin">Pilih Kantin</a>
           <a href="kantin-1">Halaman Kantin</a>
         </div>

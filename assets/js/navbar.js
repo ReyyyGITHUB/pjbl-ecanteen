@@ -4,8 +4,17 @@
   const panel = document.querySelector(".nav-panel");
   const menu = document.querySelector(".nav-links");
   const backdrop = document.querySelector(".nav-backdrop");
+  const accountToggle = document.querySelector("[data-nav-account-toggle]");
+  const accountMenu = document.querySelector(".nav-account-menu");
 
   if (!button || !navbar || !panel || !menu || !backdrop) return;
+
+  const setAccountExpanded = (expanded) => {
+    if (!accountToggle || !accountMenu) return;
+
+    accountToggle.setAttribute("aria-expanded", expanded ? "true" : "false");
+    accountMenu.hidden = !expanded;
+  };
 
   const setExpanded = (expanded) => {
     button.setAttribute("aria-expanded", expanded ? "true" : "false");
@@ -13,6 +22,7 @@
     panel.setAttribute("aria-hidden", expanded ? "false" : "true");
     backdrop.setAttribute("aria-hidden", expanded ? "false" : "true");
     document.body.classList.toggle("no-scroll", expanded);
+    if (!expanded) setAccountExpanded(false);
 
     if (expanded) {
       const firstLink = menu.querySelector("a");
@@ -30,6 +40,14 @@
 
   backdrop.addEventListener("click", () => setExpanded(false));
 
+  if (accountToggle && accountMenu) {
+    accountToggle.addEventListener("click", (event) => {
+      event.stopPropagation();
+      const isExpanded = accountToggle.getAttribute("aria-expanded") === "true";
+      setAccountExpanded(!isExpanded);
+    });
+  }
+
   panel.addEventListener("click", (event) => {
     if (!navbar.classList.contains("is-open")) return;
 
@@ -39,7 +57,25 @@
   });
 
   window.addEventListener("keydown", (event) => {
-    if (event.key === "Escape") setExpanded(false);
+    if (event.key !== "Escape") return;
+
+    const isAccountExpanded = accountToggle?.getAttribute("aria-expanded") === "true";
+    if (isAccountExpanded) {
+      setAccountExpanded(false);
+      accountToggle.focus();
+    }
+
+    if (navbar.classList.contains("is-open")) setExpanded(false);
+  });
+
+  window.addEventListener("click", (event) => {
+    if (!accountToggle || !accountMenu) return;
+
+    const target = event.target;
+    if (!(target instanceof Element)) return;
+    if (target.closest(".nav-account-wrap")) return;
+
+    setAccountExpanded(false);
   });
 
   const scrollToSection = (id) => {

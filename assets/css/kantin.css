@@ -349,13 +349,17 @@
 
 .kantin-search-results {
   margin-top: 10px;
-  border: 1px solid #e5e7eb;
+  border: 1px solid rgba(0, 0, 0, 0.12);
   border-radius: 14px;
   background: #fff;
-  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.06);
+  box-shadow: none;
   padding: 6px;
   max-height: 220px;
   overflow-y: auto;
+}
+
+.kantin-search-results[hidden] {
+  display: none !important;
 }
 
 .kantin-search-result-item {
@@ -363,15 +367,20 @@
   padding: 10px 12px;
   border: 0;
   border-radius: 10px;
-  display: grid;
-  grid-template-columns: 52px minmax(0, 1fr) auto;
+  display: flex;
   align-items: center;
   gap: 10px;
-  background: #f8fafc;
+  background: transparent;
   color: var(--text);
   font: inherit;
   text-align: left;
   cursor: pointer;
+}
+
+.kantin-search-result-item:hover,
+.kantin-search-result-item:focus-visible {
+  background: #f5f5f5;
+  outline: none;
 }
 
 .kantin-search-result-item + .kantin-search-result-item {
@@ -379,12 +388,19 @@
 }
 
 .kantin-search-result-media {
-  width: 30px;
-  height: 30px;
+  width: 40px;
+  height: 40px;
   border-radius: 8px;
   object-fit: cover;
   border: 1px solid #e5e7eb;
   background: #fff;
+  flex: 0 0 auto;
+}
+
+.kantin-search-result-copy {
+  min-width: 0;
+  display: grid;
+  gap: 4px;
 }
 
 .kantin-search-result-main {
@@ -401,7 +417,10 @@
   min-width: 0;
   color: #6b7280;
   font-size: 12px;
+  font-weight: 600;
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .kantin-search-notice {

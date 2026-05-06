@@ -8,7 +8,7 @@ require_login('payment-success');
 $basePath = rtrim(str_replace('\\', '/', dirname(dirname($_SERVER['SCRIPT_NAME'] ?? ''))), '/');
 $kode = isset($_GET['kode']) ? preg_replace('/[^A-Za-z0-9_-]/', '', (string)$_GET['kode']) : '';
 $detailHref = $kode !== '' ? $basePath . '/detail-transaction/' . rawurlencode($kode) : $basePath . '/detail-transaction';
-$homeHref = $basePath . '/index.html';
+$homeHref = $basePath . '/';
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -173,7 +173,7 @@ $homeHref = $basePath . '/index.html';
           }
 
           if (homeLink) {
-            homeLink.href = `${window.location.pathname.replace(/\/payment-success\/?$/, "")}/index.html`;
+            homeLink.href = `${window.location.pathname.replace(/\/payment-success\/?$/, "")}/`;
           }
 
           if (successCodeInline && orderCode) {

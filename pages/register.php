@@ -240,7 +240,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
           </form>
         <?php endif; ?>
 
-        <a class="auth-home" href="index.html" style="margin-top: 12px;">Kembali ke Beranda</a>
+        <a class="auth-home" href="./" style="margin-top: 12px;">Kembali ke Beranda</a>
       </section>
     </main>
     <script src="assets/js/auth-ui.js" defer></script>

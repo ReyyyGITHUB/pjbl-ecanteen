@@ -118,17 +118,101 @@
   box-shadow: 0 0 0 3px rgba(255, 164, 79, 0.2);
 }
 
-.nav-link-contact {
+.nav-account-wrap {
+  position: relative;
   flex: 0 0 auto;
-  min-width: 112px;
-  background: rgba(255, 255, 255, 0.36);
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  box-shadow: none;
 }
 
-.nav-link-contact:hover {
+.nav-account {
+  flex: 0 0 auto;
+  min-width: 112px;
+  min-height: 40px;
+  padding: 0 14px;
+  background: rgba(255, 255, 255, 0.36);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 999px;
+  color: var(--navbar-link);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-family: var(--font-sans);
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: 0;
+  text-decoration: none;
+  white-space: nowrap;
+  box-shadow: none;
+  cursor: pointer;
+  transition: background-color 160ms ease, color 160ms ease, border-color 160ms ease, transform 120ms ease;
+}
+
+.nav-account:hover {
   background-color: rgba(255, 255, 255, 0.5);
+  color: #222222;
   border-color: rgba(0, 0, 0, 0.14);
+}
+
+.nav-account:active {
+  transform: translateY(1px);
+}
+
+.nav-account:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(255, 164, 79, 0.2);
+}
+
+.nav-account-icon {
+  width: 18px;
+  height: 18px;
+  flex: 0 0 auto;
+}
+
+.nav-account-caret {
+  width: 16px;
+  height: 16px;
+  flex: 0 0 auto;
+  transition: transform 160ms ease;
+}
+
+.nav-account[aria-expanded="true"] .nav-account-caret {
+  transform: rotate(180deg);
+}
+
+.nav-account-menu {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  min-width: 176px;
+  padding: 8px;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  border-radius: 18px;
+  background: #ffffff;
+  display: grid;
+  gap: 4px;
+  z-index: 120;
+}
+
+.nav-account-menu[hidden] {
+  display: none !important;
+}
+
+.nav-account-menu-item {
+  min-height: 40px;
+  padding: 0 12px;
+  border-radius: 12px;
+  color: #333333;
+  display: flex;
+  align-items: center;
+  font-family: var(--font-sans);
+  font-size: 14px;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.nav-account-menu-item:hover {
+  background: #f5f5f5;
 }
 
 .hamburger {
@@ -198,7 +282,7 @@
     font-size: 14px;
   }
 
-  .nav-link-contact {
+  .nav-account {
     min-width: 104px;
   }
 }
@@ -269,12 +353,24 @@
     background: #f5f5f5;
   }
 
-  .nav-link-contact {
+  .nav-account-wrap {
+    width: 100%;
+  }
+
+  .nav-account {
+    width: 100%;
     margin-left: 0;
     justify-content: center;
     min-width: 0;
+    min-height: 48px;
     background: #ffffff;
     border-color: rgba(0, 0, 0, 0.12);
+  }
+
+  .nav-account-menu {
+    position: static;
+    width: 100%;
+    margin-top: 8px;
   }
 
   .hamburger {
