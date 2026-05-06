@@ -140,32 +140,6 @@ $stats = [
     <title>Kantin PJBL - E-Canteen</title>
   </head>
   <body class="kantin-detail-body">
-    <header class="kantin-detail-nav">
-      <a class="kantin-detail-brand" href="./" aria-label="E-Canteen">
-        <img src="assets/img/figma/logo-mark.png" alt="" />
-        <span>E-Canteen</span>
-      </a>
-      <nav class="kantin-detail-links" aria-label="Navigasi kantin">
-        <a href="./">Beranda</a>
-        <a href="kantin">Pilihan Kantin</a>
-        <a href="#riwayat">Riwayat Pembelian</a>
-      </nav>
-      <button class="kantin-detail-menu-toggle" type="button" aria-label="Buka menu" aria-controls="kantin-mobile-nav" aria-expanded="false" data-mobile-menu-toggle>
-        <span></span>
-        <span></span>
-        <span></span>
-      </button>
-      <a class="kantin-detail-user" href="logout" title="Logout">
-        <?= htmlspecialchars((string)($user['username'] ?? 'user')) ?>
-      </a>
-    </header>
-    <nav class="kantin-mobile-nav" id="kantin-mobile-nav" aria-label="Navigasi seluler" hidden>
-      <a href="./">Beranda</a>
-      <a href="kantin">Pilihan Kantin</a>
-      <a href="#riwayat">Riwayat Pembelian</a>
-      <a href="logout">Logout</a>
-    </nav>
-
     <main class="kantin-detail-page">
       <div class="kantin-detail-layout">
         <section class="kantin-main-content">
