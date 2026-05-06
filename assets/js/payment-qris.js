@@ -311,8 +311,7 @@
     submitButton.textContent = isLoading ? "Menyimpan pembayaran..." : "Sudah Membayar";
   };
 
-  const submitPaymentProof = async () => {
-    const draft = readDraft();
+  const submitPaymentProof = async (draft = readDraft()) => {
     const formData = new FormData();
 
     formData.append("proof", selectedProof);
@@ -394,7 +393,8 @@
     setSubmitLoading(true);
 
     try {
-      const result = await submitPaymentProof();
+      const draft = readDraft();
+      const result = await submitPaymentProof(draft);
       sessionStorage.setItem(
         PAYMENT_KEY,
         JSON.stringify({
@@ -403,6 +403,15 @@
           proofFileType: selectedProof.type,
           proofFileSize: selectedProof.size,
           confirmedAt: new Date().toISOString(),
+          pickupTime: draft.pickupTime || "",
+          items: Array.isArray(draft.items)
+            ? draft.items.map((item) => ({
+                id: String(item?.id || item?.name || ""),
+                name: String(item?.name || "Menu"),
+                price: Number(item?.price || 0),
+                qty: Number(item?.qty || 0),
+              }))
+            : [],
           ...result,
         })
       );
