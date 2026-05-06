@@ -16,11 +16,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   if ($username === '' || $password === '') {
     $error = 'Username dan password wajib diisi.';
   } else {
-    $row = find_user_by_username($username);
+    $row = find_account_by_username($username);
     if (!$row || (string)$row['password'] !== $password) {
       $error = 'Username atau password salah.';
     } else {
-      login_user($row);
+      if (array_key_exists('id_penjual', $row)) {
+        login_seller($row);
+      } else {
+        login_user($row);
+      }
       redirect_after_auth('kantin');
     }
   }

@@ -29,7 +29,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       $error = 'Password tidak boleh mengandung spasi.';
     } elseif ($password !== $confirm) {
       $error = 'Konfirmasi password tidak sama.';
-    } elseif (find_user_by_username($username)) {
+    } elseif (find_account_by_username($username)) {
       $error = 'Username sudah dipakai.';
     } else {
       $_SESSION['register_step1'] = [

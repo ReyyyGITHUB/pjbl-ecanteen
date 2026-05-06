@@ -22,13 +22,22 @@ function require_login(string $redirectTo = 'kantin'): void {
 }
 
 function login_user(array $userRow): void {
+  login_account($userRow, 'user');
+}
+
+function login_seller(array $sellerRow): void {
+  login_account($sellerRow, 'seller');
+}
+
+function login_account(array $row, string $type): void {
   start_session();
   $_SESSION[SESSION_KEY] = [
-    'id_user' => (int)$userRow['id_user'],
-    'username' => (string)$userRow['username'],
-    'nama_lengkap' => (string)$userRow['nama_lengkap'],
-    'kelas_jurusan' => (string)$userRow['kelas_jurusan'],
-    'no_telepon' => (string)$userRow['no_telepon'],
+    'account_type' => $type,
+    'id_user' => (int)($row['id_user'] ?? $row['id_penjual'] ?? 0),
+    'username' => (string)$row['username'],
+    'nama_lengkap' => (string)($row['nama_lengkap'] ?? $row['nama_penjual'] ?? ''),
+    'kelas_jurusan' => (string)($row['kelas_jurusan'] ?? 'penjual'),
+    'no_telepon' => (string)$row['no_telepon'],
   ];
 }
 
@@ -54,4 +63,19 @@ function find_user_by_username(string $username): ?array {
   $row = $res ? $res->fetch_assoc() : null;
   $stmt->close();
   return $row ?: null;
+}
+
+function find_seller_by_username(string $username): ?array {
+  $conn = db();
+  $stmt = $conn->prepare('SELECT * FROM `penjual` WHERE username = ? LIMIT 1');
+  $stmt->bind_param('s', $username);
+  $stmt->execute();
+  $res = $stmt->get_result();
+  $row = $res ? $res->fetch_assoc() : null;
+  $stmt->close();
+  return $row ?: null;
+}
+
+function find_account_by_username(string $username): ?array {
+  return find_user_by_username($username) ?: find_seller_by_username($username);
 }
