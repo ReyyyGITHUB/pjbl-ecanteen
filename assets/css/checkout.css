@@ -574,6 +574,12 @@
   }
 
   .checkout-cart-card {
+    position: static;
+    max-height: none;
+    overflow: visible;
+  }
+
+  .checkout-cart-card {
     gap: 28px;
     border-radius: 16px;
   }

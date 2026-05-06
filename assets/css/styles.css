@@ -21,7 +21,7 @@ body {
   font-family: var(--font-sans);
   color: var(--text);
   background: white;
-  padding-top: 64px; /* desktop navbar fixed */
+  padding-top: var(--navbar-height, 64px);
 }
 
 img {
