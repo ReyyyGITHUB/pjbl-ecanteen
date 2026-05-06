@@ -54,13 +54,105 @@
   color: var(--primary);
 }
 
+.kantin-user-wrap {
+  position: relative;
+  flex: 0 0 auto;
+}
+
 .kantin-user {
+  min-width: 160px;
   border: 1px solid #e7e7e7;
+  background: #fff;
+  color: #2f3136;
   font-weight: 700;
-  max-width: 160px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+}
+
+.kantin-user:hover,
+.kantin-user:focus-visible,
+.kantin-user-wrap.is-open .kantin-user {
+  border-color: #d7d7d7;
+  background: #fff;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+  color: #111827;
+}
+
+.kantin-user-name {
+  min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.kantin-user-caret {
+  flex: 0 0 auto;
+  transition: transform 0.18s ease;
+}
+
+.kantin-user-wrap.is-open .kantin-user-caret {
+  transform: rotate(180deg);
+}
+
+.kantin-user-menu {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  width: 220px;
+  padding: 8px;
+  border: 1px solid #e8e8e8;
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: 0 18px 36px rgba(17, 24, 39, 0.12);
+  z-index: 30;
+}
+
+.kantin-user-menu-head {
+  padding: 10px 12px 12px;
+  border-bottom: 1px solid #f0f0f0;
+  margin-bottom: 6px;
+  display: grid;
+  gap: 4px;
+}
+
+.kantin-user-menu-label {
+  font-size: 12px;
+  letter-spacing: 0.02em;
+  color: #8a8f98;
+  text-transform: uppercase;
+}
+
+.kantin-user-menu-name {
+  font-size: 15px;
+  color: #111827;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.kantin-user-menu-item {
+  min-height: 42px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  color: #2f3136;
+  font-weight: 600;
+}
+
+.kantin-user-menu-item:hover,
+.kantin-user-menu-item:focus-visible {
+  background: #f3f4f6;
+  color: #111827;
+}
+
+.kantin-user-menu-item + .kantin-user-menu-item {
+  margin-top: 4px;
 }
 
 .kantin-page {

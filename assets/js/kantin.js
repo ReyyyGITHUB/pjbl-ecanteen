@@ -1,4 +1,42 @@
 (() => {
+  const userMenu = document.querySelector("[data-kantin-user-menu]");
+  const userToggle = document.querySelector("[data-kantin-user-toggle]");
+  const userPanel = document.querySelector("#kantin-user-menu");
+
+  if (userMenu && userToggle && userPanel) {
+    const closeMenu = () => {
+      userMenu.classList.remove("is-open");
+      userPanel.hidden = true;
+      userToggle.setAttribute("aria-expanded", "false");
+    };
+
+    const openMenu = () => {
+      userMenu.classList.add("is-open");
+      userPanel.hidden = false;
+      userToggle.setAttribute("aria-expanded", "true");
+    };
+
+    userToggle.addEventListener("click", (event) => {
+      event.stopPropagation();
+      if (userPanel.hidden) {
+        openMenu();
+      } else {
+        closeMenu();
+      }
+    });
+
+    document.addEventListener("click", (event) => {
+      if (userMenu.contains(event.target)) return;
+      closeMenu();
+    });
+
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape") closeMenu();
+    });
+  }
+})();
+
+(() => {
   const choices = Array.from(document.querySelectorAll("[data-kantin-choice]"));
   if (choices.length === 0) return;
 

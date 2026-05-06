@@ -5,6 +5,11 @@ require_once __DIR__ . '/../app/auth.php';
 
 start_session();
 if (current_user()) {
+  $current = current_user();
+  if (($current['role'] ?? '') === 'seller') {
+    header('Location: ' . seller_dashboard_route($current));
+    exit;
+  }
   redirect_after_auth('kantin');
 }
 
@@ -20,12 +25,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!$row || (string)$row['password'] !== $password) {
       $error = 'Username atau password salah.';
     } else {
-      if (array_key_exists('id_penjual', $row)) {
+      if (($row['role'] ?? '') === 'seller') {
         login_seller($row);
+        start_session();
+        unset($_SESSION['redirect_to']);
+        header('Location: ' . seller_dashboard_route($row));
+        exit;
       } else {
         login_user($row);
+        redirect_after_auth('kantin');
       }
-      redirect_after_auth('kantin');
     }
   }
 }

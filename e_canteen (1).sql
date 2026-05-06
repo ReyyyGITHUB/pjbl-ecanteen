@@ -140,7 +140,8 @@ CREATE TABLE `penjual` (
   `nama_penjual` varchar(20) NOT NULL,
   `password` varchar(12) NOT NULL,
   `no_telepon` varchar(20) NOT NULL,
-  `username` varchar(20) NOT NULL
+  `username` varchar(20) NOT NULL,
+  `role` enum('user','seller') NOT NULL DEFAULT 'seller'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -162,7 +163,8 @@ CREATE TABLE `user` (
   `kelas_jurusan` varchar(20) NOT NULL,
   `no_telepon` varchar(20) NOT NULL,
   `username` varchar(20) NOT NULL,
-  `password` varchar(20) NOT NULL
+  `password` varchar(20) NOT NULL,
+  `role` enum('user','seller') NOT NULL DEFAULT 'user'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --

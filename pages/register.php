@@ -65,8 +65,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
       $conn = db();
       try {
-        $stmt = $conn->prepare('INSERT INTO `user` (nama_lengkap, kelas_jurusan, no_telepon, username, password) VALUES (?, ?, ?, ?, ?)');
-        $stmt->bind_param('sssss', $fullName, $kelasJurusan, $phone, $step1['username'], $step1['password']);
+        $stmt = $conn->prepare('INSERT INTO `user` (nama_lengkap, kelas_jurusan, no_telepon, username, password, role) VALUES (?, ?, ?, ?, ?, ?)');
+        $role = 'user';
+        $stmt->bind_param('ssssss', $fullName, $kelasJurusan, $phone, $step1['username'], $step1['password'], $role);
         $stmt->execute();
         $stmt->close();
 

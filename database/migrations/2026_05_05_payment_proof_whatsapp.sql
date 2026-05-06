@@ -137,6 +137,18 @@ CALL add_ecanteen_column_if_missing(
   'ALTER TABLE payment ADD COLUMN buyer_wa_sent_at DATETIME NULL AFTER buyer_wa_error'
 );
 
+CALL add_ecanteen_column_if_missing(
+  'user',
+  'role',
+  'ALTER TABLE `user` ADD COLUMN role ENUM(''user'',''seller'') NOT NULL DEFAULT ''user'' AFTER password'
+);
+
+CALL add_ecanteen_column_if_missing(
+  'penjual',
+  'role',
+  'ALTER TABLE `penjual` ADD COLUMN role ENUM(''user'',''seller'') NOT NULL DEFAULT ''seller'' AFTER username'
+);
+
 CALL add_ecanteen_index_if_missing(
   'order_pesanan',
   'idx_order_kode_pesanan',

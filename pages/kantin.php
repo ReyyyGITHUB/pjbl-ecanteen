@@ -6,6 +6,8 @@ require_once __DIR__ . '/../app/db.php';
 
 require_login('kantin');
 $user = current_user();
+$isSeller = (($user['role'] ?? '') === 'seller');
+$dashboardHref = $isSeller ? seller_dashboard_route($user) : '';
 
 $kantinCards = [
   ['name' => 'Kantin PJBL', 'image' => 'assets/img/kantin/kantin-make.png', 'active' => true, 'target' => 'kantin-1'],
@@ -107,9 +109,31 @@ $benefits = [
         <a href="#pilihan-kantin">Pilihan Kantin</a>
         <a href="#riwayat">Riwayat Pembelian</a>
       </nav>
-      <a class="kantin-user" href="logout" title="Logout">
-        <?= htmlspecialchars((string)($user['username'] ?? 'user')) ?>
-      </a>
+      <div class="kantin-user-wrap" data-kantin-user-menu>
+        <button
+          class="kantin-user"
+          type="button"
+          aria-haspopup="menu"
+          aria-expanded="false"
+          aria-controls="kantin-user-menu"
+          data-kantin-user-toggle
+        >
+          <span class="kantin-user-name"><?= htmlspecialchars((string)($user['username'] ?? 'user')) ?></span>
+          <svg class="kantin-user-caret" viewBox="0 0 24 24" width="16" height="16" fill="none" aria-hidden="true">
+            <path d="M6.75 9.75 12 15l5.25-5.25" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+        <div class="kantin-user-menu" id="kantin-user-menu" role="menu" hidden>
+          <div class="kantin-user-menu-head">
+            <span class="kantin-user-menu-label">Akun</span>
+            <strong class="kantin-user-menu-name"><?= htmlspecialchars((string)($user['username'] ?? 'user')) ?></strong>
+          </div>
+          <?php if ($isSeller): ?>
+            <a class="kantin-user-menu-item" role="menuitem" href="<?= htmlspecialchars($dashboardHref) ?>">Dashboard</a>
+          <?php endif; ?>
+          <a class="kantin-user-menu-item" role="menuitem" href="logout">Logout</a>
+        </div>
+      </div>
     </header>
 
     <main class="kantin-page">
