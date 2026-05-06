@@ -7,6 +7,8 @@ require_login('payment-success');
 
 $basePath = rtrim(str_replace('\\', '/', dirname(dirname($_SERVER['SCRIPT_NAME'] ?? ''))), '/');
 $kode = isset($_GET['kode']) ? preg_replace('/[^A-Za-z0-9_-]/', '', (string)$_GET['kode']) : '';
+$detailHref = $kode !== '' ? $basePath . '/detail-transaction/' . rawurlencode($kode) : $basePath . '/detail-transaction';
+$homeHref = $basePath . '/index.html';
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -22,7 +24,7 @@ $kode = isset($_GET['kode']) ? preg_replace('/[^A-Za-z0-9_-]/', '', (string)$_GE
   </head>
   <body class="payment-qris-body">
     <main class="payment-qris-page">
-      <section class="payment-qris-success" aria-labelledby="payment-success-title">
+      <section class="payment-qris-success" data-payment-success aria-labelledby="payment-success-title">
         <div class="payment-success-icon" aria-hidden="true">
           <span></span>
         </div>
@@ -34,14 +36,21 @@ $kode = isset($_GET['kode']) ? preg_replace('/[^A-Za-z0-9_-]/', '', (string)$_GE
           <span>Kode Pesanan</span>
           <strong data-success-code><?= htmlspecialchars($kode, ENT_QUOTES, 'UTF-8') ?></strong>
         </div>
-        <div class="payment-success-wa" data-success-wa hidden>
-          <strong>Notifikasi otomatis belum terkirim.</strong>
-          <p>Pesanan sudah tersimpan. Gunakan WhatsApp manual agar penjual tetap menerima detail pesanan.</p>
-          <a href="#" target="_blank" rel="noopener" data-manual-whatsapp>Kirim WhatsApp Manual</a>
-        </div>
-        <div class="payment-success-actions">
-          <a class="payment-success-secondary" href="<?= htmlspecialchars($basePath, ENT_QUOTES, 'UTF-8') ?>/kantin">Pilih Kantin</a>
-          <a class="payment-success-primary" href="<?= htmlspecialchars($basePath, ENT_QUOTES, 'UTF-8') ?>/kantin-1">Mau Jajan Lagi?</a>
+        <div class="payment-success-drawer" data-success-drawer aria-hidden="true" inert>
+          <div class="payment-success-status">
+            <span>Order berhasil dibuat</span>
+            <h2>Detail pesanan sudah diteruskan.</h2>
+            <p>Cek WhatsApp kamu untuk konfirmasi. Tunjukkan kode pesanan saat mengambil makanan di kantin.</p>
+          </div>
+          <div class="payment-success-wa" data-success-wa hidden>
+            <strong>Notifikasi otomatis belum terkirim.</strong>
+            <p>Pesanan sudah tersimpan. Gunakan WhatsApp manual agar penjual tetap menerima detail pesanan.</p>
+            <a href="#" target="_blank" rel="noopener" data-manual-whatsapp>Kirim WhatsApp Manual</a>
+          </div>
+          <div class="payment-success-actions">
+            <a class="payment-success-secondary" href="<?= htmlspecialchars($detailHref, ENT_QUOTES, 'UTF-8') ?>" data-detail-transaction>Lihat detail transaksi</a>
+            <a class="payment-success-primary" href="<?= htmlspecialchars($homeHref, ENT_QUOTES, 'UTF-8') ?>" data-home-link>Kembali ke beranda</a>
+          </div>
         </div>
       </section>
     </main>
@@ -53,12 +62,26 @@ $kode = isset($_GET['kode']) ? preg_replace('/[^A-Za-z0-9_-]/', '', (string)$_GE
         const successCode = document.querySelector("[data-success-code]");
         const successWa = document.querySelector("[data-success-wa]");
         const manualWhatsapp = document.querySelector("[data-manual-whatsapp]");
+        const detailLink = document.querySelector("[data-detail-transaction]");
+        const homeLink = document.querySelector("[data-home-link]");
+        const successSection = document.querySelector("[data-payment-success]");
+        const successDrawer = document.querySelector("[data-success-drawer]");
 
         try {
           const payment = JSON.parse(sessionStorage.getItem(PAYMENT_KEY) || "{}");
-          if (successCode && payment.order_code) {
-            successCode.textContent = payment.order_code;
+          const orderCode = payment.order_code || (successCode ? successCode.textContent.trim() : "");
+
+          if (successCode && orderCode) {
+            successCode.textContent = orderCode;
             if (successMeta) successMeta.hidden = false;
+          }
+
+          if (detailLink && orderCode) {
+            detailLink.href = `${window.location.pathname.replace(/\/payment-success\/?$/, "")}/detail-transaction/${encodeURIComponent(orderCode)}`;
+          }
+
+          if (homeLink) {
+            homeLink.href = `${window.location.pathname.replace(/\/payment-success\/?$/, "")}/index.html`;
           }
 
           if (successWa && manualWhatsapp && payment.wa_status === "failed" && payment.manual_whatsapp_url) {
@@ -68,6 +91,17 @@ $kode = isset($_GET['kode']) ? preg_replace('/[^A-Za-z0-9_-]/', '', (string)$_GE
         } catch (error) {
           // The route still works without sessionStorage metadata.
         }
+
+        window.setTimeout(() => {
+          if (successSection) {
+            successSection.classList.add("is-expanded");
+          }
+
+          if (successDrawer) {
+            successDrawer.removeAttribute("inert");
+            successDrawer.setAttribute("aria-hidden", "false");
+          }
+        }, 800);
       })();
     </script>
   </body>
