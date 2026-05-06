@@ -82,7 +82,7 @@ CREATE TABLE `order_pesanan` (
   `id_user` int(11) NOT NULL,
   `jumlah` int(11) NOT NULL,
   `tanggal_pesanan` date NOT NULL,
-  `status_pesanan` enum('diproses','siap_diambil') NOT NULL,
+  `status_pesanan` enum('diproses','siap_diambil','ditolak') NOT NULL,
   `waktu_pengambilan` varchar(80) DEFAULT NULL,
   `catatan` text DEFAULT NULL,
   `created_at` datetime NOT NULL DEFAULT current_timestamp()
@@ -108,7 +108,7 @@ CREATE TABLE `payment` (
   `kode_pesanan` varchar(32) DEFAULT NULL,
   `total_pembayaran` int(11) NOT NULL,
   `metode_pembayaran` enum('cash','qris') NOT NULL,
-  `status_pembayaran` enum('menunggu_konfirmasi','pembayaran_dikonfirmasi') NOT NULL,
+  `status_pembayaran` enum('menunggu_konfirmasi','pembayaran_dikonfirmasi','pembayaran_ditolak') NOT NULL,
   `bukti_pembayaran` varchar(255) NOT NULL,
   `bukti_original_name` varchar(255) DEFAULT NULL,
   `bukti_mime_type` varchar(100) DEFAULT NULL,

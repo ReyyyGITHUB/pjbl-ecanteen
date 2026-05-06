@@ -69,7 +69,7 @@ const extractOrderCode = (text) => {
   return match ? match[0].toUpperCase() : "";
 };
 
-const callReadyEndpoint = async ({ orderCode, sellerPhone, readyEndpoint }) => {
+const callReadyEndpoint = async ({ orderCode, sellerPhone, readyEndpoint, action }) => {
   const response = await fetch(readyEndpoint || READY_ENDPOINT, {
     method: "POST",
     headers: {
@@ -79,6 +79,7 @@ const callReadyEndpoint = async ({ orderCode, sellerPhone, readyEndpoint }) => {
     body: JSON.stringify({
       order_code: orderCode,
       seller_phone: sellerPhone,
+      action,
     }),
   });
   const data = await response.json().catch(() => ({}));
@@ -139,8 +140,10 @@ client.on("disconnected", (reason) => {
 
 client.on("vote_update", async (vote) => {
   const selected = Array.isArray(vote.selectedOptions) ? vote.selectedOptions : [];
-  const selectedReady = selected.some((option) => String(option.name || "").toLowerCase() === "siap diambil");
-  if (!selectedReady) return;
+  const selectedNames = selected.map((option) => String(option.name || "").toLowerCase());
+  const selectedReady = selectedNames.includes("siap diambil");
+  const selectedReject = selectedNames.includes("tolak pesanan");
+  if (!selectedReady && !selectedReject) return;
 
   const pollMessageId = getSerializedMessageId(vote.parentMsgKey) || getSerializedMessageId(vote.parentMessage);
   const pollMeta = pendingPolls.get(pollMessageId);
@@ -164,11 +167,12 @@ client.on("vote_update", async (vote) => {
       orderCode,
       sellerPhone,
       readyEndpoint: pollMeta?.readyEndpoint,
+      action: selectedReady ? "ready" : "reject",
     });
     const chatId = pollMeta?.chatId || `${sellerPhone}@c.us`;
 
-    if (result.already_ready) {
-      await sendMessageSafe(chatId, `Pesanan ${orderCode} sudah pernah ditandai siap.`);
+    if (result.already_processed) {
+      await sendMessageSafe(chatId, result.seller_message || `Pesanan ${orderCode} sudah pernah diproses.`);
       pendingPolls.delete(pollMessageId);
       savePendingPolls();
       return;
@@ -178,7 +182,7 @@ client.on("vote_update", async (vote) => {
       await sendMessageSafe(`${normalizePhone(result.buyer_phone)}@c.us`, result.buyer_message);
     }
 
-    await sendMessageSafe(chatId, `Status ${orderCode} sudah diubah menjadi siap diambil.`);
+    await sendMessageSafe(chatId, result.seller_message || `Status ${orderCode} sudah diperbarui.`);
     pendingPolls.delete(pollMessageId);
     savePendingPolls();
   } catch (error) {
@@ -236,7 +240,7 @@ app.post("/send-order", requireToken, async (req, res) => {
 
     if (shouldSendStatusPoll) {
       const pollTitle = `${message}\n\nStatus pesanan ${orderCode}`;
-      const poll = new Poll(pollTitle, ["Siap diambil", "Belum siap"], {
+      const poll = new Poll(pollTitle, ["Siap diambil", "Tolak pesanan"], {
         allowMultipleAnswers: false,
       });
       const pollMessage = await client.sendMessage(chatId, poll);

@@ -1,9 +1,9 @@
 ALTER TABLE order_pesanan
-  MODIFY COLUMN status_pesanan ENUM('diproses','siap_diambil') NOT NULL;
+  MODIFY COLUMN status_pesanan ENUM('diproses','siap_diambil','ditolak') NOT NULL;
 
 ALTER TABLE payment
   MODIFY COLUMN metode_pembayaran ENUM('cash','qris') NOT NULL,
-  MODIFY COLUMN status_pembayaran ENUM('menunggu_konfirmasi','pembayaran_dikonfirmasi') NOT NULL,
+  MODIFY COLUMN status_pembayaran ENUM('menunggu_konfirmasi','pembayaran_dikonfirmasi','pembayaran_ditolak') NOT NULL,
   MODIFY COLUMN bukti_pembayaran VARCHAR(255) NOT NULL;
 
 DROP PROCEDURE IF EXISTS add_ecanteen_column_if_missing;

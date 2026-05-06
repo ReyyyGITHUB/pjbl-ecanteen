@@ -29,15 +29,30 @@ function format_kantin_name(string $name): string {
 
 function build_ready_message(array $order): string {
   return implode("\n", [
-    '🍱 *Pesanan siap diambil!*',
+    '✅ *Pesanan kamu sudah ready!*',
     '',
     'Halo *' . $order['buyer_name'] . '* (@' . $order['buyer_username'] . '),',
-    'Pesanan kamu dengan kode *' . $order['order_code'] . '* sudah siap.',
+    'Makananmu sudah siap diambil nih.',
     '',
-    '📍 *Kantin:* ' . $order['kantin_name'],
-    '🕐 *Ambil:* _' . $order['pickup_time'] . '_',
+    '🔖 *' . $order['order_code'] . '*',
+    '📍 ' . $order['kantin_name'],
+    '🕐 ' . $order['pickup_time'],
     '',
-    '_Tunjukkan kode ini ke penjual saat mengambil pesanan ya._',
+    '_Tunjukkan kode ini ke penjual ya._',
+  ]);
+}
+
+function build_rejected_message(array $order): string {
+  return implode("\n", [
+    '❌ *Pesanan tidak dapat diproses*',
+    '',
+    'Halo *' . $order['buyer_name'] . '* (@' . $order['buyer_username'] . '),',
+    'Pesanan kamu dengan kode *' . $order['order_code'] . '* tidak dapat diproses oleh penjual.',
+    '',
+    '📍 ' . $order['kantin_name'],
+    '💰 Pembayaran: perlu dikonfirmasi ulang',
+    '',
+    'Silakan konfirmasi langsung ke penjual di kantin dengan menunjukkan kode pesanan ini.',
   ]);
 }
 
@@ -58,6 +73,7 @@ if (!is_array($payload)) {
 
 $orderCode = strtoupper(trim((string)($payload['order_code'] ?? '')));
 $sellerPhone = normalize_whatsapp_number((string)($payload['seller_phone'] ?? ''));
+$action = strtolower(trim((string)($payload['action'] ?? 'ready')));
 
 if (!preg_match('/^SNAPAN-\d{3}$/', $orderCode)) {
   fail_json(422, 'Kode pesanan tidak valid.');
@@ -66,6 +82,14 @@ if (!preg_match('/^SNAPAN-\d{3}$/', $orderCode)) {
 if ($sellerPhone === '') {
   fail_json(422, 'Nomor penjual tidak valid.');
 }
+
+if (!in_array($action, ['ready', 'reject'], true)) {
+  fail_json(422, 'Aksi status pesanan tidak valid.');
+}
+
+$nextOrderStatus = $action === 'ready' ? 'siap_diambil' : 'ditolak';
+$nextPaymentStatus = $action === 'ready' ? 'pembayaran_dikonfirmasi' : 'pembayaran_ditolak';
+$actionDoneText = $action === 'ready' ? 'ditandai siap diambil' : 'ditolak';
 
 $conn = db();
 $stmt = $conn->prepare(
@@ -105,32 +129,41 @@ if (normalize_whatsapp_number((string)$first['seller_phone']) !== $sellerPhone) 
   fail_json(403, 'Nomor penjual tidak sesuai dengan pesanan.');
 }
 
-$alreadyReady = true;
+$alreadyProcessed = true;
+$hasOtherFinalStatus = false;
 foreach ($rows as $row) {
-  if ((string)$row['status_pesanan'] !== 'siap_diambil') {
-    $alreadyReady = false;
-    break;
+  $status = (string)$row['status_pesanan'];
+  if ($status !== $nextOrderStatus) {
+    $alreadyProcessed = false;
+  }
+
+  if ($status !== 'diproses' && $status !== $nextOrderStatus) {
+    $hasOtherFinalStatus = true;
   }
 }
 
-if ($alreadyReady) {
+if ($alreadyProcessed) {
   respond_json(200, [
     'ok' => true,
-    'already_ready' => true,
+    'already_processed' => true,
     'order_code' => $orderCode,
-    'message' => 'Pesanan ' . $orderCode . ' sudah pernah ditandai siap.',
+    'seller_message' => 'Pesanan ' . $orderCode . ' sudah pernah ' . $actionDoneText . '.',
   ]);
+}
+
+if ($hasOtherFinalStatus) {
+  fail_json(409, 'Pesanan ' . $orderCode . ' sudah punya status final lain.');
 }
 
 $conn->begin_transaction();
 try {
-  $updateOrder = $conn->prepare("UPDATE order_pesanan SET status_pesanan = 'siap_diambil' WHERE kode_pesanan = ?");
-  $updateOrder->bind_param('s', $orderCode);
+  $updateOrder = $conn->prepare('UPDATE order_pesanan SET status_pesanan = ? WHERE kode_pesanan = ?');
+  $updateOrder->bind_param('ss', $nextOrderStatus, $orderCode);
   $updateOrder->execute();
   $updateOrder->close();
 
-  $updatePayment = $conn->prepare("UPDATE payment SET status_pembayaran = 'pembayaran_dikonfirmasi' WHERE kode_pesanan = ?");
-  $updatePayment->bind_param('s', $orderCode);
+  $updatePayment = $conn->prepare('UPDATE payment SET status_pembayaran = ? WHERE kode_pesanan = ?');
+  $updatePayment->bind_param('ss', $nextPaymentStatus, $orderCode);
   $updatePayment->execute();
   $updatePayment->close();
 
@@ -152,8 +185,10 @@ $readyOrder = [
 
 respond_json(200, [
   'ok' => true,
-  'already_ready' => false,
+  'already_processed' => false,
+  'action' => $action,
   'order_code' => $orderCode,
   'buyer_phone' => $buyerPhone,
-  'buyer_message' => build_ready_message($readyOrder),
+  'buyer_message' => $action === 'ready' ? build_ready_message($readyOrder) : build_rejected_message($readyOrder),
+  'seller_message' => 'Status ' . $orderCode . ' sudah ' . $actionDoneText . '.',
 ]);
