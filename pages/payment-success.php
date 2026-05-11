@@ -117,16 +117,15 @@ if ($kode !== '' && table_exists('rating_kantin')) {
               data-rating-order-code="<?= htmlspecialchars($kode, ENT_QUOTES, 'UTF-8') ?>"
               data-current-rating="<?= htmlspecialchars((string)$ratingContext['rating'], ENT_QUOTES, 'UTF-8') ?>"
             >
-              <div class="payment-success-status-head">
-                <div>
-                  <span>Rating toko</span>
-                  <h2>Nilai <?= htmlspecialchars((string)$ratingContext['kantin_name'], ENT_QUOTES, 'UTF-8') ?></h2>
-                </div>
+            <div class="payment-success-status-head">
+              <div>
+                <span>Rating toko</span>
+                <h2>Nilai <?= htmlspecialchars((string)$ratingContext['kantin_name'], ENT_QUOTES, 'UTF-8') ?></h2>
               </div>
-              <p class="payment-success-rating-copy">Kasih rating setelah pembayaran supaya nilai toko di halaman kantin ikut ter-update.</p>
-              <div class="payment-success-rating-stars" role="radiogroup" aria-label="Pilih rating toko">
-                <?php for ($star = 1; $star <= 5; $star++): ?>
-                  <button
+            </div>
+            <div class="payment-success-rating-stars" role="radiogroup" aria-label="Pilih rating toko">
+              <?php for ($star = 1; $star <= 5; $star++): ?>
+                <button
                     type="button"
                     class="payment-success-rating-star<?= $ratingContext['rating'] >= $star ? ' is-active' : '' ?>"
                     data-rating-star
@@ -179,16 +178,78 @@ if ($kode !== '' && table_exists('rating_kantin')) {
         const ratingSubmit = document.querySelector("[data-rating-submit]");
         const ratingStars = Array.from(document.querySelectorAll("[data-rating-star]"));
         let selectedRating = Number(ratingCard?.dataset.currentRating || 0);
+        let lastSavedRating = selectedRating;
+        let previewRating = 0;
 
         const formatRupiah = (value) => `Rp ${new Intl.NumberFormat("id-ID").format(Number(value) || 0)}`;
 
         const syncRatingStars = () => {
           for (const star of ratingStars) {
             const value = Number(star.dataset.ratingValue || 0);
-            const isActive = value <= selectedRating;
+            const isPreviewMode = previewRating > 0;
+            const isActive = !isPreviewMode && value <= selectedRating;
+            const isPreview = isPreviewMode && value < previewRating;
+            const isPreviewCurrent = isPreviewMode && value === previewRating;
             star.classList.toggle("is-active", isActive);
-            star.setAttribute("aria-pressed", String(isActive));
+            star.classList.toggle("is-preview", isPreview);
+            star.classList.toggle("is-preview-current", isPreviewCurrent);
+            star.setAttribute("aria-pressed", String(isActive || isPreviewCurrent));
           }
+        };
+
+        const hasUnsavedRating = () =>
+          !!ratingCard &&
+          selectedRating >= 1 &&
+          selectedRating <= 5 &&
+          selectedRating !== lastSavedRating;
+
+        const buildRatingPayload = () =>
+          JSON.stringify({
+            order_code: ratingCard?.dataset.ratingOrderCode || "",
+            rating: selectedRating,
+          });
+
+        const persistSavedRating = (avgRating = "") => {
+          lastSavedRating = selectedRating;
+          if (!ratingCard || !ratingStatus) return;
+          ratingCard.dataset.currentRating = String(selectedRating);
+          ratingStatus.textContent = avgRating !== ""
+            ? `Rating tersimpan: ${selectedRating} bintang. Rata-rata toko sekarang ${avgRating}/5.`
+            : `Rating tersimpan: ${selectedRating} bintang.`;
+        };
+
+        const saveRating = async ({ background = false } = {}) => {
+          if (!ratingCard || !hasUnsavedRating()) return true;
+
+          const apiUrl = ratingCard.dataset.ratingApi || "";
+          if (!apiUrl) return false;
+
+          if (background && typeof navigator.sendBeacon === "function") {
+            const blob = new Blob([buildRatingPayload()], { type: "application/json" });
+            const queued = navigator.sendBeacon(apiUrl, blob);
+            if (queued) {
+              lastSavedRating = selectedRating;
+            }
+            return queued;
+          }
+
+          const response = await fetch(apiUrl, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Accept: "application/json",
+            },
+            body: buildRatingPayload(),
+            keepalive: background,
+          });
+
+          const result = await response.json().catch(() => ({}));
+          if (!response.ok || !result.ok) {
+            throw new Error(result.message || "Rating toko gagal disimpan.");
+          }
+
+          persistSavedRating(String(result.avg_rating ?? ""));
+          return true;
         };
 
         const renderReceiptItems = (items) => {
@@ -321,10 +382,41 @@ if ($kode !== '' && table_exists('rating_kantin')) {
           syncRatingStars();
 
           for (const star of ratingStars) {
+            star.addEventListener("mouseenter", () => {
+              previewRating = Number(star.dataset.ratingValue || 0);
+              syncRatingStars();
+            });
+
+            star.addEventListener("focus", () => {
+              previewRating = Number(star.dataset.ratingValue || 0);
+              syncRatingStars();
+            });
+
             star.addEventListener("click", () => {
               selectedRating = Number(star.dataset.ratingValue || 0);
+              previewRating = 0;
               syncRatingStars();
               ratingStatus.textContent = `Rating dipilih: ${selectedRating} bintang.`;
+            });
+          }
+
+          if (ratingCard) {
+            ratingCard.addEventListener("mouseleave", () => {
+              previewRating = 0;
+              syncRatingStars();
+            });
+          }
+
+          for (const star of ratingStars) {
+            star.addEventListener("blur", () => {
+              window.setTimeout(() => {
+                const focused = document.activeElement;
+                const isStillInside = focused instanceof HTMLElement && focused.closest("[data-rating-card]");
+                if (!isStillInside) {
+                  previewRating = 0;
+                  syncRatingStars();
+                }
+              }, 0);
             });
           }
 
@@ -338,25 +430,7 @@ if ($kode !== '' && table_exists('rating_kantin')) {
             ratingSubmit.textContent = "Menyimpan...";
 
             try {
-              const response = await fetch(ratingCard.dataset.ratingApi || "", {
-                method: "POST",
-                headers: {
-                  "Content-Type": "application/json",
-                  Accept: "application/json",
-                },
-                body: JSON.stringify({
-                  order_code: ratingCard.dataset.ratingOrderCode || "",
-                  rating: selectedRating,
-                }),
-              });
-
-              const result = await response.json().catch(() => ({}));
-              if (!response.ok || !result.ok) {
-                throw new Error(result.message || "Rating toko gagal disimpan.");
-              }
-
-              ratingCard.dataset.currentRating = String(selectedRating);
-              ratingStatus.textContent = `Rating tersimpan: ${selectedRating} bintang. Rata-rata toko sekarang ${result.avg_rating}/5.`;
+              await saveRating();
               ratingSubmit.textContent = "Update Rating";
             } catch (error) {
               ratingStatus.textContent = error.message || "Rating toko gagal disimpan.";
@@ -364,6 +438,34 @@ if ($kode !== '' && table_exists('rating_kantin')) {
             } finally {
               ratingSubmit.disabled = false;
             }
+          });
+
+          const navigationLinks = [homeLink, detailLink].filter(Boolean);
+          for (const link of navigationLinks) {
+            link.addEventListener("click", async (event) => {
+              if (!hasUnsavedRating()) return;
+
+              event.preventDefault();
+              const href = link.getAttribute("href") || "";
+              if (ratingSubmit) {
+                ratingSubmit.disabled = true;
+              }
+
+              try {
+                await saveRating();
+              } catch (error) {
+                if (ratingStatus) {
+                  ratingStatus.textContent = error.message || "Rating toko gagal disimpan.";
+                }
+              } finally {
+                window.location.href = href;
+              }
+            });
+          }
+
+          window.addEventListener("pagehide", () => {
+            if (!hasUnsavedRating()) return;
+            saveRating({ background: true });
           });
         }
       })();
