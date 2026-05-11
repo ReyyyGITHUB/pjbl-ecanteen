@@ -96,6 +96,8 @@ $benefits = [
     <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700&family=Nunito+Sans:wght@400;600;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="assets/css/styles.css" />
     <link rel="stylesheet" href="assets/css/kantin.css" />
+    <link rel="stylesheet" href="assets/css/page-loader.css" />
+    <script src="assets/js/page-loader.js" defer></script>
     <title>Kantin - E-Canteen</title>
   </head>
   <body class="kantin-body">
@@ -152,7 +154,7 @@ $benefits = [
 
       <section class="kantin-search-panel" aria-label="Cari makanan">
         <p>Pesan apa hari ini?</p>
-        <form class="kantin-search" action="kantin" method="get">
+        <form class="kantin-search" action="kantin" method="get" data-skip-page-loader>
           <label class="kantin-search-field">
             <img src="assets/img/kantin/icon-food-small.svg" alt="" />
             <input

@@ -105,6 +105,7 @@
     const target = event.target.closest(".hero-search-result-item");
     if (!target) return;
 
+    window.showPageLoader?.();
     window.location.href = target.dataset.targetUrl || "kantin-1";
   });
 
@@ -118,10 +119,12 @@
     const firstResult = results.querySelector(".hero-search-result-item");
 
     if (firstResult) {
+      window.showPageLoader?.();
       window.location.href = firstResult.dataset.targetUrl || "kantin-1";
       return;
     }
 
+    window.showPageLoader?.();
     window.location.href = "kantin";
   });
 })();

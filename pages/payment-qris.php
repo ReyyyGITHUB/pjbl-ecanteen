@@ -17,13 +17,15 @@ $basePath = rtrim(str_replace('\\', '/', dirname(dirname($_SERVER['SCRIPT_NAME']
     <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700&family=Inter:wght@600;700&family=Nunito+Sans:wght@400;600;700&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="<?= htmlspecialchars($basePath, ENT_QUOTES, 'UTF-8') ?>/assets/css/styles.css" />
     <link rel="stylesheet" href="<?= htmlspecialchars($basePath, ENT_QUOTES, 'UTF-8') ?>/assets/css/payment-qris.css" />
+    <link rel="stylesheet" href="<?= htmlspecialchars($basePath, ENT_QUOTES, 'UTF-8') ?>/assets/css/page-loader.css" />
+    <script src="<?= htmlspecialchars($basePath, ENT_QUOTES, 'UTF-8') ?>/assets/js/page-loader.js" defer></script>
     <title>Pembayaran QRIS - E-Canteen</title>
   </head>
   <body class="payment-qris-body">
     <main class="payment-qris-page" data-payment-root>
       <section class="payment-qris-flow" aria-labelledby="payment-qris-title" data-payment-screen>
         <div class="payment-qris-brandbar">
-          <a class="payment-qris-cancel" href="<?= htmlspecialchars($basePath, ENT_QUOTES, 'UTF-8') ?>/checkout" aria-label="Batalkan pembayaran dan kembali ke checkout" data-cancel-payment>
+          <a class="payment-qris-cancel" href="<?= htmlspecialchars($basePath, ENT_QUOTES, 'UTF-8') ?>/checkout" aria-label="Batalkan pembayaran dan kembali ke checkout" data-cancel-payment data-skip-page-loader>
             <span aria-hidden="true">&#8249;</span>
             <strong>Batalkan</strong>
           </a>
@@ -120,7 +122,7 @@ $basePath = rtrim(str_replace('\\', '/', dirname(dirname($_SERVER['SCRIPT_NAME']
             <p>Gunakan screenshot transaksi agar Ibu Kantin bisa memverifikasi pembayaranmu.</p>
           </div>
 
-          <form class="payment-qris-form" data-payment-form novalidate>
+          <form class="payment-qris-form" data-payment-form data-skip-page-loader novalidate>
             <div class="payment-qris-upload-group">
               <label class="payment-qris-label" for="payment-proof">Masukkan bukti pembayaran di sini</label>
               <label class="payment-qris-dropzone" for="payment-proof" data-proof-dropzone tabindex="0" role="button" aria-describedby="payment-proof-error">
@@ -147,17 +149,77 @@ $basePath = rtrim(str_replace('\\', '/', dirname(dirname($_SERVER['SCRIPT_NAME']
         </div>
       </section>
 
-      <section class="payment-qris-success" aria-labelledby="payment-success-title" data-success-screen hidden>
-        <div class="payment-success-icon" aria-hidden="true">
-          <span></span>
+      <section class="payment-qris-success is-loading" aria-labelledby="payment-success-pending-title" data-success-screen hidden>
+        <div class="payment-success-skeleton" aria-hidden="true">
+          <div class="payment-success-skeleton-hero">
+            <span class="payment-success-skeleton-icon payment-success-skeleton-shimmer"></span>
+            <div class="payment-success-skeleton-copy">
+              <span class="payment-success-skeleton-line is-title payment-success-skeleton-shimmer"></span>
+              <span class="payment-success-skeleton-line is-copy payment-success-skeleton-shimmer"></span>
+            </div>
+          </div>
+
+          <div class="payment-success-skeleton-card">
+            <div class="payment-success-skeleton-head">
+              <div class="payment-success-skeleton-head-copy">
+                <span class="payment-success-skeleton-line is-label payment-success-skeleton-shimmer"></span>
+                <span class="payment-success-skeleton-line is-heading payment-success-skeleton-shimmer"></span>
+              </div>
+              <span class="payment-success-skeleton-pill payment-success-skeleton-shimmer"></span>
+            </div>
+
+            <div class="payment-success-skeleton-code">
+              <span class="payment-success-skeleton-line is-code-label payment-success-skeleton-shimmer"></span>
+              <span class="payment-success-skeleton-line is-code-value payment-success-skeleton-shimmer"></span>
+            </div>
+
+            <div class="payment-success-receipt-divider" aria-hidden="true"></div>
+
+            <div class="payment-success-skeleton-items">
+              <div class="payment-success-skeleton-item">
+                <div class="payment-success-skeleton-item-main">
+                  <span class="payment-success-skeleton-line is-item-title payment-success-skeleton-shimmer"></span>
+                  <span class="payment-success-skeleton-line is-item-meta payment-success-skeleton-shimmer"></span>
+                </div>
+                <span class="payment-success-skeleton-line is-item-total payment-success-skeleton-shimmer"></span>
+              </div>
+              <div class="payment-success-skeleton-item">
+                <div class="payment-success-skeleton-item-main">
+                  <span class="payment-success-skeleton-line is-item-title payment-success-skeleton-shimmer"></span>
+                  <span class="payment-success-skeleton-line is-item-meta payment-success-skeleton-shimmer"></span>
+                </div>
+                <span class="payment-success-skeleton-line is-item-total payment-success-skeleton-shimmer"></span>
+              </div>
+            </div>
+
+            <div class="payment-success-receipt-divider" aria-hidden="true"></div>
+
+            <div class="payment-success-skeleton-footer">
+              <div class="payment-success-skeleton-footer-block">
+                <span class="payment-success-skeleton-line is-footer-label payment-success-skeleton-shimmer"></span>
+                <span class="payment-success-skeleton-line is-footer-value payment-success-skeleton-shimmer"></span>
+              </div>
+              <div class="payment-success-skeleton-footer-block">
+                <span class="payment-success-skeleton-line is-footer-label payment-success-skeleton-shimmer"></span>
+                <span class="payment-success-skeleton-line is-footer-value payment-success-skeleton-shimmer"></span>
+              </div>
+              <div class="payment-success-skeleton-footer-block">
+                <span class="payment-success-skeleton-line is-footer-label payment-success-skeleton-shimmer"></span>
+                <span class="payment-success-skeleton-line is-footer-value payment-success-skeleton-shimmer"></span>
+              </div>
+            </div>
+
+            <span class="payment-success-skeleton-line is-note payment-success-skeleton-shimmer"></span>
+          </div>
+
+          <div class="payment-success-skeleton-actions">
+            <span class="payment-success-skeleton-action payment-success-skeleton-shimmer"></span>
+            <span class="payment-success-skeleton-action payment-success-skeleton-shimmer"></span>
+          </div>
         </div>
-        <div class="payment-success-copy">
-          <h1 id="payment-success-title">Pesanan Diterima!</h1>
-          <p>Siap-siap ya, pesananmu akan segera diproses Ibu Kantin.</p>
-        </div>
-        <div class="payment-success-actions">
-          <button class="payment-success-secondary" type="button" data-download-proof>Simpan Bukti</button>
-          <a class="payment-success-primary" href="<?= htmlspecialchars($basePath, ENT_QUOTES, 'UTF-8') ?>/kantin-1">Mau Jajan Lagi?</a>
+        <div style="position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;" aria-live="polite">
+          <h1 id="payment-success-pending-title">Pesanan sedang disimpan</h1>
+          <p>Mohon tunggu, pesananmu sedang diproses.</p>
         </div>
       </section>
 

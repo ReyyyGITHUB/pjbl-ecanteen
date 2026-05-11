@@ -75,6 +75,8 @@ if (!$testimonials) {
     <link rel="stylesheet" href="assets/css/howto.css" />
     <link rel="stylesheet" href="assets/css/testimonials.css" />
     <link rel="stylesheet" href="assets/css/footer.css" />
+    <link rel="stylesheet" href="assets/css/page-loader.css" />
+    <script src="assets/js/page-loader.js" defer></script>
     <title>E-Canteen</title>
   </head>
   <body>

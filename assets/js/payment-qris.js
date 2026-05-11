@@ -9,7 +9,6 @@
   const agreementInput = document.querySelector("[data-payment-agreement]");
   const agreementError = document.querySelector("[data-agreement-error]");
   const submitButton = document.querySelector(".payment-qris-submit");
-  const downloadButton = document.querySelector("[data-download-proof]");
   const totalText = document.querySelector("[data-payment-total]");
   const countdownText = document.querySelector("[data-payment-countdown]");
   const qrisCode = document.querySelector("[data-qris-code]");
@@ -33,7 +32,6 @@
     !agreementInput ||
     !agreementError ||
     !submitButton ||
-    !downloadButton ||
     !totalText ||
     !countdownText ||
     !qrisCode ||
@@ -62,6 +60,7 @@
   let currentTotal = 0;
   let currentTimerSignature = "";
   let qrisExpired = false;
+  let pendingSuccessVisible = false;
 
   const formatRupiah = (amount) => `Rp ${new Intl.NumberFormat("id-ID").format(amount)}`;
 
@@ -270,6 +269,21 @@
     }
   };
 
+  const showPendingSuccessScreen = () => {
+    if (pendingSuccessVisible) return;
+    pendingSuccessVisible = true;
+    paymentScreen.hidden = true;
+    successScreen.hidden = false;
+    window.scrollTo(0, 0);
+  };
+
+  const hidePendingSuccessScreen = () => {
+    if (!pendingSuccessVisible) return;
+    pendingSuccessVisible = false;
+    successScreen.hidden = true;
+    paymentScreen.hidden = false;
+  };
+
   const setError = (message) => {
     error.textContent = message;
     error.hidden = false;
@@ -308,7 +322,7 @@
   const setSubmitLoading = (isLoading) => {
     submitButton.disabled = isLoading;
     submitButton.classList.toggle("is-loading", isLoading);
-    submitButton.textContent = isLoading ? "Menyimpan pembayaran..." : "Sudah Membayar";
+    submitButton.textContent = isLoading ? "Menyimpan pesanan..." : "Sudah Membayar";
   };
 
   const submitPaymentProof = async (draft = readDraft()) => {
@@ -391,6 +405,7 @@
     clearProofObjectUrl();
     proofObjectUrl = URL.createObjectURL(selectedProof);
     setSubmitLoading(true);
+    showPendingSuccessScreen();
 
     try {
       const draft = readDraft();
@@ -422,21 +437,11 @@
       window.clearInterval(countdownTimer);
       window.location.href = `${basePath}/payment-success?kode=${encodeURIComponent(result.order_code || "")}`;
     } catch (submitError) {
+      hidePendingSuccessScreen();
       setError(submitError.message || "Pembayaran gagal disimpan.");
       dropzone.focus();
       setSubmitLoading(false);
     }
-  });
-
-  downloadButton.addEventListener("click", () => {
-    if (!proofObjectUrl || !selectedProof) return;
-
-    const link = document.createElement("a");
-    link.href = proofObjectUrl;
-    link.download = selectedProof.name || "bukti-pembayaran.png";
-    document.body.appendChild(link);
-    link.click();
-    link.remove();
   });
 
   qrisRefresh.addEventListener("click", () => {

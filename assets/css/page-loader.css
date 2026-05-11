@@ -1,0 +1,57 @@
+.page-loader {
+  position: fixed;
+  inset: 0;
+  z-index: 2147483647;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: rgba(255, 250, 244, 0.82);
+  backdrop-filter: blur(3px);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.18s ease, visibility 0.18s ease;
+}
+
+.page-loader.is-visible {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+.page-loader-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 18px;
+  border: 1px solid rgba(181, 131, 90, 0.18);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.96);
+  box-shadow: 0 14px 36px rgba(84, 52, 32, 0.12);
+}
+
+.page-loader-spinner {
+  width: 18px;
+  height: 18px;
+  border: 2.5px solid rgba(224, 176, 125, 0.28);
+  border-top-color: #d97706;
+  border-radius: 50%;
+  animation: page-loader-spin 0.72s linear infinite;
+}
+
+.page-loader-text {
+  color: #6b3f22;
+  font-size: 0.95rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+body.is-page-loading {
+  cursor: progress;
+}
+
+@keyframes page-loader-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

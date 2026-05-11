@@ -16,6 +16,8 @@ $user = current_user();
     <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700&family=Nunito+Sans:wght@400;600;700&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="assets/css/styles.css" />
     <link rel="stylesheet" href="assets/css/checkout.css" />
+    <link rel="stylesheet" href="assets/css/page-loader.css" />
+    <script src="assets/js/page-loader.js" defer></script>
     <title>Checkout - E-Canteen</title>
   </head>
   <body class="checkout-body">
@@ -62,7 +64,7 @@ $user = current_user();
         <section class="checkout-info-card" aria-labelledby="checkout-info-title">
           <h2 id="checkout-info-title">Informasi Pemesan</h2>
 
-          <form class="checkout-form" data-checkout-form>
+          <form class="checkout-form" data-checkout-form data-skip-page-loader>
             <fieldset class="checkout-fieldset">
               <legend>Pilih Waktu Pengambilan</legend>
               <div class="checkout-pickup-options" role="radiogroup" aria-label="Pilih waktu pengambilan">

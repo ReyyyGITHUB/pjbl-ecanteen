@@ -280,6 +280,7 @@
     };
 
     sessionStorage.setItem(checkoutCartKey, JSON.stringify(payload));
+    window.showPageLoader?.("Membuka checkout...");
     window.location.href = "checkout";
   };
 

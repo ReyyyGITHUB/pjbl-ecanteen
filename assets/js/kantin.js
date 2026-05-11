@@ -47,6 +47,7 @@
 
       const target = choice.dataset.kantinTarget;
       if (target) {
+        window.showPageLoader?.();
         window.location.href = target;
       }
     });
@@ -232,6 +233,7 @@
     selectedTargetUrl = target.dataset.targetUrl || "kantin-1";
     input.value = selectedMenuName;
     hideResults();
+    window.showPageLoader?.();
     window.location.href = selectedTargetUrl;
   });
 
@@ -261,6 +263,7 @@
     event.preventDefault();
     hideResults();
     hideNotice();
+    window.showPageLoader?.();
     window.location.href = selectedTargetUrl || "kantin-1";
   });
 })();
