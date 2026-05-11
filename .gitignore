@@ -4,3 +4,4 @@
 /wa-bot/pending-polls.json
 /storage/payment-proofs/*
 !/storage/payment-proofs/.gitkeep
+/.env

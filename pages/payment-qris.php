@@ -2,10 +2,12 @@
 declare(strict_types=1);
 
 require_once __DIR__ . '/../app/auth.php';
+require_once __DIR__ . '/../app/env.php';
 
 require_login('payment-qris');
 
 $basePath = rtrim(str_replace('\\', '/', dirname(dirname($_SERVER['SCRIPT_NAME'] ?? ''))), '/');
+$isDemoMode = in_array(strtolower((string)env_value('DEMO_MODE', 'false')), ['1', 'true', 'yes', 'on'], true);
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -22,7 +24,14 @@ $basePath = rtrim(str_replace('\\', '/', dirname(dirname($_SERVER['SCRIPT_NAME']
     <title>Pembayaran QRIS - E-Canteen</title>
   </head>
   <body class="payment-qris-body">
-    <main class="payment-qris-page" data-payment-root>
+    <main
+      class="payment-qris-page"
+      data-payment-root
+      data-demo-mode="<?= $isDemoMode ? 'true' : 'false' ?>"
+      data-create-payment-api="<?= htmlspecialchars($basePath, ENT_QUOTES, 'UTF-8') ?>/api/create-louvin-payment.php"
+      data-check-payment-api="<?= htmlspecialchars($basePath, ENT_QUOTES, 'UTF-8') ?>/api/check-louvin-payment.php"
+      data-success-url="<?= htmlspecialchars($basePath, ENT_QUOTES, 'UTF-8') ?>/payment-success"
+    >
       <section class="payment-qris-flow" aria-labelledby="payment-qris-title" data-payment-screen>
         <div class="payment-qris-brandbar">
           <a class="payment-qris-cancel" href="<?= htmlspecialchars($basePath, ENT_QUOTES, 'UTF-8') ?>/checkout" aria-label="Batalkan pembayaran dan kembali ke checkout" data-cancel-payment data-skip-page-loader>
@@ -61,12 +70,12 @@ $basePath = rtrim(str_replace('\\', '/', dirname(dirname($_SERVER['SCRIPT_NAME']
             </div>
           </div>
 
-          <div class="payment-qris-visual">
-            <div class="payment-qris-code" aria-label="Kode QRIS untuk pembayaran" data-qris-code data-static-qris-src="<?= htmlspecialchars($basePath, ENT_QUOTES, 'UTF-8') ?>/assets/img/checkout/qris-static.png">
-              <div class="payment-qris-generated" data-qris-generated></div>
-              <img class="payment-qris-static-fallback" src="<?= htmlspecialchars($basePath, ENT_QUOTES, 'UTF-8') ?>/assets/img/checkout/qris-static.png" alt="QRIS Kantin Mak'e" width="250" height="352" data-qris-fallback />
-            </div>
-            <p class="payment-qris-status" data-qris-status aria-live="polite">Menyiapkan QRIS dinamis sesuai nominal pesanan...</p>
+            <div class="payment-qris-visual">
+              <div class="payment-qris-code" aria-label="Kode QRIS untuk pembayaran" data-qris-code data-static-qris-src="<?= htmlspecialchars($basePath, ENT_QUOTES, 'UTF-8') ?>/assets/img/checkout/qris-static.png">
+                <div class="payment-qris-generated" data-qris-generated></div>
+                <img class="payment-qris-static-fallback" src="<?= htmlspecialchars($basePath, ENT_QUOTES, 'UTF-8') ?>/assets/img/checkout/qris-static.png" alt="QRIS Kantin Mak'e" width="250" height="352" data-qris-fallback />
+              </div>
+            <p class="payment-qris-status" data-qris-status aria-live="polite"><?= $isDemoMode ? 'Menyiapkan QRIS dinamis sesuai nominal pesanan...' : 'Menyiapkan transaksi Louvin...' ?></p>
             <button class="payment-qris-refresh" type="button" data-qris-refresh hidden>Refresh QRIS</button>
             <p>Scan dengan E-Wallet atau M-Banking</p>
           </div>
@@ -116,37 +125,75 @@ $basePath = rtrim(str_replace('\\', '/', dirname(dirname($_SERVER['SCRIPT_NAME']
           </details>
         </section>
 
-        <div class="payment-qris-card payment-qris-proof-card">
-          <div class="payment-qris-proof-head">
-            <h2>Upload Bukti Pembayaran</h2>
-            <p>Gunakan screenshot transaksi agar Ibu Kantin bisa memverifikasi pembayaranmu.</p>
-          </div>
-
-          <form class="payment-qris-form" data-payment-form data-skip-page-loader novalidate>
-            <div class="payment-qris-upload-group">
-              <label class="payment-qris-label" for="payment-proof">Masukkan bukti pembayaran di sini</label>
-              <label class="payment-qris-dropzone" for="payment-proof" data-proof-dropzone tabindex="0" role="button" aria-describedby="payment-proof-error">
-                <input id="payment-proof" type="file" accept="image/*" data-proof-input />
-                <span class="payment-qris-upload-button">
-                  <svg viewBox="0 0 24 24" aria-hidden="true">
-                    <path d="M12 3v11m0 0 4-4m-4 4-4-4" />
-                    <path d="M5 15v3a3 3 0 0 0 3 3h8a3 3 0 0 0 3-3v-3" />
-                  </svg>
-                  <span data-proof-label>Click or drop image</span>
-                </span>
-              </label>
-              <p class="payment-qris-error" id="payment-proof-error" data-proof-error aria-live="polite" hidden>Pilih gambar bukti pembayaran terlebih dahulu.</p>
+        <?php if ($isDemoMode): ?>
+          <div class="payment-qris-card payment-qris-proof-card">
+            <div class="payment-qris-proof-head">
+              <h2>Upload Bukti Pembayaran</h2>
+              <p>Mode demo aktif. Upload screenshot pembayaran agar pesanan tersimpan seperti flow manual sebelumnya.</p>
             </div>
 
-            <label class="payment-qris-agreement">
-              <input type="checkbox" data-payment-agreement />
-              <span>Saya sudah memastikan nominal benar dan setuju membeli serta membayar pesanan ini.</span>
-            </label>
-            <p class="payment-qris-error" data-agreement-error aria-live="polite" hidden>Centang persetujuan sebelum mengonfirmasi pembayaran.</p>
+            <form class="payment-qris-form" data-payment-form data-skip-page-loader novalidate>
+              <div class="payment-qris-upload-group">
+                <label class="payment-qris-label" for="payment-proof">Masukkan bukti pembayaran di sini</label>
+                <label class="payment-qris-dropzone" for="payment-proof" data-proof-dropzone tabindex="0" role="button" aria-describedby="payment-proof-error">
+                  <input id="payment-proof" type="file" accept="image/*" data-proof-input />
+                  <img class="payment-qris-proof-preview" src="" alt="Preview bukti pembayaran" data-proof-preview hidden />
+                  <span class="payment-qris-upload-button">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                      <path d="M12 3v11m0 0 4-4m-4 4-4-4" />
+                      <path d="M5 15v3a3 3 0 0 0 3 3h8a3 3 0 0 0 3-3v-3" />
+                    </svg>
+                    <span data-proof-label>Click or drop image</span>
+                  </span>
+                </label>
+                <p class="payment-qris-error" id="payment-proof-error" data-proof-error aria-live="polite" hidden>Pilih gambar bukti pembayaran terlebih dahulu.</p>
+              </div>
 
-            <button class="payment-qris-submit" type="submit">Sudah Membayar</button>
-          </form>
-        </div>
+              <label class="payment-qris-agreement">
+                <input type="checkbox" data-payment-agreement />
+                <span>Saya sudah memastikan nominal benar dan setuju membeli serta membayar pesanan ini.</span>
+              </label>
+              <p class="payment-qris-error" data-agreement-error aria-live="polite" hidden>Centang persetujuan sebelum mengonfirmasi pembayaran.</p>
+
+              <button class="payment-qris-submit" type="submit">Sudah Membayar</button>
+            </form>
+          </div>
+        <?php else: ?>
+          <div class="payment-qris-card payment-qris-proof-card payment-louvin-card">
+            <div class="payment-qris-proof-head">
+              <h2>Status Pembayaran</h2>
+              <p>Pembayaran dikonfirmasi otomatis oleh Louvin setelah QRIS berhasil dibayar.</p>
+            </div>
+
+            <div class="payment-louvin-status" data-louvin-status aria-live="polite">
+              Menyiapkan invoice QRIS...
+            </div>
+
+            <dl class="payment-louvin-meta">
+              <div>
+                <dt>Kode Pesanan</dt>
+                <dd data-louvin-order-code>-</dd>
+              </div>
+              <div>
+                <dt>Fee Louvin</dt>
+                <dd data-louvin-fee>Rp 0</dd>
+              </div>
+              <div>
+                <dt>Merchant Terima</dt>
+                <dd data-louvin-net>Rp 0</dd>
+              </div>
+              <div>
+                <dt>Kedaluwarsa</dt>
+                <dd data-louvin-expired>-</dd>
+              </div>
+            </dl>
+
+            <div class="payment-louvin-actions">
+              <button class="payment-qris-submit" type="button" data-check-payment-now>Cek Status</button>
+              <a class="payment-louvin-success-link" href="#" data-success-link hidden>Lanjut ke Success</a>
+            </div>
+          </div>
+        <?php endif; ?>
       </section>
 
       <section class="payment-qris-success is-loading" aria-labelledby="payment-success-pending-title" data-success-screen hidden>

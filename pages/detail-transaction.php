@@ -71,7 +71,12 @@ if ($orderCode !== '' && (int)($current['id_user'] ?? 0) > 0) {
       pay.wa_status,
       pay.buyer_wa_status,
       pay.wa_sent_at,
-      pay.buyer_wa_sent_at
+      pay.buyer_wa_sent_at,
+      pay.louvin_transaction_id,
+      pay.louvin_order_id,
+      pay.louvin_status,
+      pay.louvin_fee,
+      pay.louvin_net_amount
      FROM order_pesanan op
      INNER JOIN menu m ON m.id_menu = op.id_menu
      INNER JOIN kantin k ON k.id_kantin = m.id_kantin
@@ -124,6 +129,10 @@ $totalPayment = (int)($transaction['total_pembayaran'] ?? 0);
 $paymentMethod = $isFound ? strtoupper((string)($transaction['metode_pembayaran'] ?? '')) : '';
 $waStatus = (string)($transaction['wa_status'] ?? '');
 $buyerWaStatus = (string)($transaction['buyer_wa_status'] ?? '');
+$louvinTransactionId = (string)($transaction['louvin_transaction_id'] ?? '');
+$louvinStatus = (string)($transaction['louvin_status'] ?? '');
+$louvinFee = (int)($transaction['louvin_fee'] ?? 0);
+$louvinNetAmount = (int)($transaction['louvin_net_amount'] ?? 0);
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -238,6 +247,11 @@ $buyerWaStatus = (string)($transaction['buyer_wa_status'] ?? '');
                 <span>Bukti pembayaran</span>
                 <?php if ($proofUrl !== ''): ?>
                   <img src="<?= htmlspecialchars($proofUrl, ENT_QUOTES, 'UTF-8') ?>" alt="Bukti pembayaran <?= htmlspecialchars($orderCode, ENT_QUOTES, 'UTF-8') ?>" />
+                <?php elseif ($louvinTransactionId !== ''): ?>
+                  <div class="payment-detail-proof-empty">
+                    <strong>Dikonfirmasi Louvin.</strong>
+                    <p>Transaksi ini memakai QRIS payment gateway, jadi tidak membutuhkan upload bukti manual.</p>
+                  </div>
                 <?php else: ?>
                   <div class="payment-detail-proof-empty">
                     <strong>Belum ada bukti tersimpan.</strong>
@@ -259,6 +273,20 @@ $buyerWaStatus = (string)($transaction['buyer_wa_status'] ?? '');
                   <span>Status WhatsApp pembeli</span>
                   <strong><?= htmlspecialchars(detail_display_name($buyerWaStatus), ENT_QUOTES, 'UTF-8') ?></strong>
                 </div>
+                <?php if ($louvinTransactionId !== ''): ?>
+                  <div>
+                    <span>Status Louvin</span>
+                    <strong><?= htmlspecialchars(detail_display_name($louvinStatus !== '' ? $louvinStatus : 'pending'), ENT_QUOTES, 'UTF-8') ?></strong>
+                  </div>
+                  <div>
+                    <span>Fee PG</span>
+                    <strong><?= htmlspecialchars(detail_rupiah($louvinFee), ENT_QUOTES, 'UTF-8') ?></strong>
+                  </div>
+                  <div>
+                    <span>Merchant terima</span>
+                    <strong><?= htmlspecialchars(detail_rupiah($louvinNetAmount), ENT_QUOTES, 'UTF-8') ?></strong>
+                  </div>
+                <?php endif; ?>
               </div>
 
               <a class="payment-detail-home" href="<?= htmlspecialchars($homeHref, ENT_QUOTES, 'UTF-8') ?>">Kembali ke beranda</a>

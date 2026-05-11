@@ -465,6 +465,7 @@
   border: 1px dashed #d4d4d4;
   border-radius: 18px;
   background: #fafafa;
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -486,6 +487,11 @@
   background: rgba(255, 122, 0, 0.08);
 }
 
+.payment-qris-dropzone.has-preview {
+  padding: 10px;
+  align-items: stretch;
+}
+
 .payment-qris-dropzone input {
   position: absolute;
   width: 1px;
@@ -493,6 +499,20 @@
   overflow: hidden;
   clip: rect(0 0 0 0);
   white-space: nowrap;
+}
+
+.payment-qris-proof-preview {
+  width: 100%;
+  height: auto;
+  max-height: 180px;
+  border-radius: 14px;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+}
+
+.payment-qris-proof-preview[hidden] {
+  display: none !important;
 }
 
 .payment-qris-upload-button {
@@ -511,6 +531,15 @@
   font-size: 14px;
   font-weight: 800;
   line-height: 24px;
+}
+
+.payment-qris-dropzone.has-preview .payment-qris-upload-button {
+  position: absolute;
+  right: 18px;
+  bottom: 18px;
+  max-width: calc(100% - 36px);
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: 0 10px 24px rgba(51, 51, 51, 0.1);
 }
 
 .payment-qris-upload-button svg {
@@ -605,6 +634,91 @@
 .payment-qris-submit:disabled {
   cursor: wait;
   opacity: 0.72;
+}
+
+.payment-louvin-card {
+  display: grid;
+  gap: 22px;
+}
+
+.payment-louvin-status {
+  min-height: 54px;
+  padding: 14px 16px;
+  border: 1px solid rgba(255, 122, 0, 0.22);
+  border-radius: 16px;
+  background: rgba(255, 122, 0, 0.08);
+  color: #333;
+  font-family: var(--font-sans);
+  font-size: 15px;
+  font-weight: 800;
+  line-height: 1.35;
+  display: flex;
+  align-items: center;
+}
+
+.payment-louvin-status.is-error {
+  border-color: rgba(255, 49, 49, 0.28);
+  background: rgba(255, 49, 49, 0.08);
+  color: #b50000;
+}
+
+.payment-louvin-meta {
+  margin: 0;
+  display: grid;
+  gap: 12px;
+}
+
+.payment-louvin-meta div {
+  min-height: 52px;
+  padding: 12px 14px;
+  border: 1px solid #eeeeee;
+  border-radius: 14px;
+  background: #fafafa;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.payment-louvin-meta dt,
+.payment-louvin-meta dd {
+  margin: 0;
+}
+
+.payment-louvin-meta dt {
+  color: #6f6f6f;
+  font-family: var(--font-sans);
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.payment-louvin-meta dd {
+  color: #333;
+  font-family: var(--font-sans);
+  font-size: 14px;
+  font-weight: 900;
+  text-align: right;
+}
+
+.payment-louvin-actions {
+  display: grid;
+  gap: 10px;
+}
+
+.payment-louvin-success-link {
+  min-height: 48px;
+  border: 1px solid rgba(255, 122, 0, 0.35);
+  border-radius: 16px;
+  color: var(--primary);
+  display: grid;
+  place-items: center;
+  font-family: var(--font-sans);
+  font-size: 15px;
+  font-weight: 900;
+}
+
+.payment-louvin-success-link[hidden] {
+  display: none !important;
 }
 
 .payment-qris-success {

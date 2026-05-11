@@ -2,6 +2,12 @@ RewriteEngine On
 
 DirectoryIndex index.php index.html
 
+<FilesMatch "^(\.env|.*\.sql|PRD\.md)$">
+  Require all denied
+</FilesMatch>
+
+RewriteRule ^wa-bot/ - [F,L]
+
 # If the request is for an existing file or directory, serve it directly
 RewriteCond %{REQUEST_FILENAME} -f [OR]
 RewriteCond %{REQUEST_FILENAME} -d
