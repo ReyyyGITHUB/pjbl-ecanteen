@@ -17,3 +17,21 @@ function db(): mysqli {
   }
   return $conn;
 }
+
+function table_exists(string $tableName): bool {
+  $conn = db();
+  $stmt = $conn->prepare(
+    'SELECT 1
+     FROM information_schema.TABLES
+     WHERE TABLE_SCHEMA = ?
+       AND TABLE_NAME = ?
+     LIMIT 1'
+  );
+  $databaseName = DB_NAME;
+  $stmt->bind_param('ss', $databaseName, $tableName);
+  $stmt->execute();
+  $row = $stmt->get_result()->fetch_row();
+  $stmt->close();
+
+  return $row !== null;
+}

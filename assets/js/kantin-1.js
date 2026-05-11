@@ -120,8 +120,8 @@
     orderContent.innerHTML = `
       <div class="kantin-order-empty">
         <img src="assets/img/kantin-1/icon-cart-outline.svg" alt="">
-        <strong>Pesananmu masih kosong!</strong>
-        <p>Yuk, tambahkan pesananmu!</p>
+        <strong>Ringkasan jajanmu masih kosong!</strong>
+        <p>Yuk, tambahkan menu favoritmu dulu.</p>
       </div>
     `;
   };
@@ -130,8 +130,8 @@
     mobileOrderContent.innerHTML = `
       <div class="kantin-mobile-order-empty">
         <img src="assets/img/kantin-1/icon-cart-outline.svg" alt="">
-        <strong>Pesananmu masih kosong!</strong>
-        <p>Yuk, tambahkan pesananmu!</p>
+        <strong>Ringkasan jajanmu masih kosong!</strong>
+        <p>Yuk, tambahkan menu favoritmu dulu.</p>
       </div>
     `;
   };

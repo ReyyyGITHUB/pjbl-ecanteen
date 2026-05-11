@@ -105,6 +105,59 @@ $popularMenus = array_values(array_filter(
   static fn(array $menu): bool => $menu['stock'] < 10
 ));
 
+$statsSummary = [
+  'total_menu' => 0,
+  'total_stock' => 0,
+  'total_orders' => 0,
+  'avg_rating' => null,
+  'total_rating' => 0,
+];
+
+$stmtStats = $conn->prepare(
+  'SELECT
+     COUNT(*) AS total_menu,
+     COALESCE(SUM(CASE WHEN sisa_stock > 0 THEN sisa_stock ELSE 0 END), 0) AS total_stock
+   FROM menu
+   WHERE id_kantin = ?'
+);
+$stmtStats->bind_param('i', $kantinId);
+$stmtStats->execute();
+$statsResult = $stmtStats->get_result();
+$statsSummary = array_merge($statsSummary, $statsResult->fetch_assoc() ?: []);
+$stmtStats->close();
+
+$stmtOrders = $conn->prepare(
+  'SELECT
+     COUNT(DISTINCT op.kode_pesanan) AS total_orders
+   FROM order_pesanan op
+   INNER JOIN menu m ON m.id_menu = op.id_menu
+   WHERE m.id_kantin = ?'
+);
+$stmtOrders->bind_param('i', $kantinId);
+$stmtOrders->execute();
+$ordersResult = $stmtOrders->get_result();
+$statsSummary = array_merge($statsSummary, $ordersResult->fetch_assoc() ?: []);
+$stmtOrders->close();
+
+if (table_exists('rating_kantin')) {
+  $stmtRating = $conn->prepare(
+    'SELECT
+       AVG(rating) AS avg_rating,
+       COUNT(*) AS total_rating
+     FROM rating_kantin
+     WHERE id_kantin = ?'
+  );
+  $stmtRating->bind_param('i', $kantinId);
+  $stmtRating->execute();
+  $ratingResult = $stmtRating->get_result();
+  $statsSummary = array_merge($statsSummary, $ratingResult->fetch_assoc() ?: []);
+  $stmtRating->close();
+}
+
+$avgRatingValue = (int)($statsSummary['total_rating'] ?? 0) > 0
+  ? number_format((float)$statsSummary['avg_rating'], 1, '.', '')
+  : 'Baru';
+
 $sections = [
   [
     'title' => 'Menu Paling Laris 🔥',
@@ -121,10 +174,10 @@ $sections = [
 ];
 
 $stats = [
-  ['icon' => 'icon-star.svg', 'value' => '4.6', 'label' => 'Rating Kantin', 'tone' => 'neutral'],
-  ['icon' => 'icon-time-blue.svg', 'value' => '1 Menit', 'label' => 'Kecepatan Respon', 'tone' => 'blue'],
-  ['icon' => 'icon-thumb-up-outline.svg', 'value' => '20+ Ratings', 'label' => 'Rasanya Enak!', 'tone' => 'neutral'],
-  ['icon' => 'icon-smile.svg', 'value' => '14+ Ratings', 'label' => 'Penjual Ramah :)', 'tone' => 'orange'],
+  ['icon' => 'icon-star.svg', 'value' => (string)(int)$statsSummary['total_menu'], 'label' => 'Total Menu', 'tone' => 'neutral'],
+  ['icon' => 'icon-thumb-up-outline.svg', 'value' => (string)(int)$statsSummary['total_stock'], 'label' => 'Stok Siap Jual', 'tone' => 'neutral'],
+  ['icon' => 'icon-smile.svg', 'value' => (string)(int)$statsSummary['total_orders'], 'label' => 'Total Transaksi', 'tone' => 'orange'],
+  ['icon' => 'icon-star.svg', 'value' => $avgRatingValue, 'label' => 'Rating Toko', 'tone' => 'blue'],
 ];
 ?>
 <!DOCTYPE html>
@@ -137,7 +190,7 @@ $stats = [
     <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700&family=Nunito+Sans:wght@400;600;700&family=Poppins:wght@400;500&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="assets/css/styles.css" />
     <link rel="stylesheet" href="assets/css/kantin-1.css" />
-    <title>Kantin PJBL - E-Canteen</title>
+    <title><?= htmlspecialchars(format_menu_name((string)$kantin['nama_kantin'])) ?> - E-Canteen</title>
   </head>
   <body class="kantin-detail-body">
     <main class="kantin-detail-page">
@@ -230,9 +283,9 @@ $stats = [
           <?php endforeach; ?>
         </section>
 
-        <aside class="kantin-order-panel" id="riwayat">
+        <aside class="kantin-order-panel" id="ringkasan-pesanan">
           <div class="kantin-order-box">
-            <h2>Pesanan Anda</h2>
+            <h2>Ringkasan Jajananmu</h2>
             <div class="kantin-order-content" data-order-content></div>
 
             <div class="kantin-order-footer">
@@ -252,7 +305,7 @@ $stats = [
       class="kantin-mobile-cartbar"
       data-mobile-cartbar
       hidden
-      aria-label="Lihat ringkasan pesanan"
+      aria-label="Lihat ringkasan jajanan"
       aria-expanded="false"
       aria-controls="kantin-mobile-order-sheet"
     >
@@ -270,8 +323,8 @@ $stats = [
       <section class="kantin-mobile-sheet-dialog" role="dialog" aria-modal="true" aria-labelledby="kantin-mobile-sheet-title">
         <div class="kantin-mobile-sheet-box">
           <div class="kantin-mobile-sheet-header">
-            <h2 id="kantin-mobile-sheet-title">Pesanan Anda</h2>
-            <button type="button" class="kantin-mobile-sheet-dismiss" data-mobile-sheet-close aria-label="Tutup pesanan">
+            <h2 id="kantin-mobile-sheet-title">Ringkasan Jajananmu</h2>
+            <button type="button" class="kantin-mobile-sheet-dismiss" data-mobile-sheet-close aria-label="Tutup ringkasan jajanan">
               <img src="assets/img/kantin-1/icon-close-orange.svg" alt="" />
             </button>
           </div>
@@ -291,9 +344,9 @@ $stats = [
       <div class="kantin-detail-footer-main">
         <div class="kantin-detail-footer-cta">
           <h2>Mau Pesan Makanan Tanpa Antri?</h2>
-          <a href="#riwayat">
+          <a href="#ringkasan-pesanan">
             <img src="assets/img/kantin-1/icon-footer-cart.svg" alt="" />
-            <span>Click Disni!</span>
+            <span>Klik Di Sini!</span>
           </a>
         </div>
         <p>Copyright © 2025 Kelompok 1 XPPLG2 SMKN 8 Semarang. All Rights Reserved.</p>
@@ -308,13 +361,14 @@ $stats = [
           <a href="./#testimoni">Testimoni</a>
           <a href="kantin">Pilih Kantin</a>
           <a href="kantin-1">Halaman Kantin</a>
+          <a href="riwayat">Riwayat Pembelian</a>
         </div>
         <div>
           <h3>Informasi Kontak</h3>
-          <a href="#">Email</a>
-          <a href="#">Instagram</a>
-          <a href="#">Whatsapp</a>
-          <a href="#">Nomor Telepon</a>
+          <span>Email sekolah tersedia saat demo langsung.</span>
+          <span>Instagram kantin akan ditambahkan di fase berikutnya.</span>
+          <span>WhatsApp penjual dipakai di alur pemesanan internal.</span>
+          <span>Nomor telepon ditampilkan saat operasional aktif.</span>
         </div>
       </div>
     </footer>

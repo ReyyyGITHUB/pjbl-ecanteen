@@ -2,6 +2,7 @@
 declare(strict_types=1);
 
 require_once __DIR__ . '/../app/auth.php';
+require_once __DIR__ . '/../app/db.php';
 
 require_login('payment-success');
 
@@ -9,6 +10,36 @@ $basePath = rtrim(str_replace('\\', '/', dirname(dirname($_SERVER['SCRIPT_NAME']
 $kode = isset($_GET['kode']) ? preg_replace('/[^A-Za-z0-9_-]/', '', (string)$_GET['kode']) : '';
 $detailHref = $kode !== '' ? $basePath . '/detail-transaction/' . rawurlencode($kode) : $basePath . '/detail-transaction';
 $homeHref = $basePath . '/';
+$ratingContext = null;
+
+if ($kode !== '' && table_exists('rating_kantin')) {
+  $conn = db();
+  $stmt = $conn->prepare(
+    'SELECT
+       k.nama_kantin,
+       MAX(rk.rating) AS rating
+     FROM order_pesanan op
+     INNER JOIN menu m ON m.id_menu = op.id_menu
+     INNER JOIN kantin k ON k.id_kantin = m.id_kantin
+     LEFT JOIN rating_kantin rk ON rk.kode_pesanan = op.kode_pesanan
+     WHERE op.kode_pesanan = ? AND op.id_user = ?
+     GROUP BY k.nama_kantin
+     LIMIT 1'
+  );
+  $current = current_user();
+  $userId = (int)($current['id_user'] ?? 0);
+  $stmt->bind_param('si', $kode, $userId);
+  $stmt->execute();
+  $row = $stmt->get_result()->fetch_assoc() ?: null;
+  $stmt->close();
+
+  if ($row) {
+    $ratingContext = [
+      'kantin_name' => (string)$row['nama_kantin'],
+      'rating' => (int)($row['rating'] ?? 0),
+    ];
+  }
+}
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -30,7 +61,7 @@ $homeHref = $basePath . '/';
         </div>
         <div class="payment-success-copy">
           <h1 id="payment-success-title">Pesanan Diterima!</h1>
-          <p>Siap-siap ya, pesananmu akan segera diproses Ibu Kantin.</p>
+          <p>Pembayaranmu sudah tersimpan. Penjual akan memproses pesanan ini sebelum siap diambil.</p>
         </div>
         <div class="payment-success-drawer" data-success-drawer aria-hidden="true" inert>
           <div class="payment-success-status payment-success-receipt">
@@ -52,8 +83,8 @@ $homeHref = $basePath . '/';
             <div class="payment-success-item-list" data-success-items>
               <div class="payment-success-item is-placeholder">
                 <div class="payment-success-item-main">
-                  <h3>Detail pesanan menunggu</h3>
-                  <p>Item akan muncul setelah pembayaran berhasil diproses.</p>
+                  <h3>Ringkasan pesanan sedang disiapkan</h3>
+                  <p>Kalau detail item belum muncul di sini, buka halaman detail transaksi untuk melihat status terbaru.</p>
                 </div>
                 <strong>-</strong>
               </div>
@@ -76,12 +107,49 @@ $homeHref = $basePath . '/';
               </div>
             </div>
 
-            <p class="payment-success-receipt-note">Tunjukkan kode pesanan saat mengambil makanan di kantin. Detail pesanan lengkap bisa dibuka dari tombol di bawah.</p>
+            <p class="payment-success-receipt-note">Simpan kode pesanan ini. Kamu bisa memantau status terbaru dan melihat rincian lengkap dari tombol detail transaksi di bawah.</p>
           </div>
+          <?php if ($ratingContext): ?>
+            <div
+              class="payment-success-status payment-success-rating"
+              data-rating-card
+              data-rating-api="<?= htmlspecialchars($basePath, ENT_QUOTES, 'UTF-8') ?>/api/submit-kantin-rating.php"
+              data-rating-order-code="<?= htmlspecialchars($kode, ENT_QUOTES, 'UTF-8') ?>"
+              data-current-rating="<?= htmlspecialchars((string)$ratingContext['rating'], ENT_QUOTES, 'UTF-8') ?>"
+            >
+              <div class="payment-success-status-head">
+                <div>
+                  <span>Rating toko</span>
+                  <h2>Nilai <?= htmlspecialchars((string)$ratingContext['kantin_name'], ENT_QUOTES, 'UTF-8') ?></h2>
+                </div>
+              </div>
+              <p class="payment-success-rating-copy">Kasih rating setelah pembayaran supaya nilai toko di halaman kantin ikut ter-update.</p>
+              <div class="payment-success-rating-stars" role="radiogroup" aria-label="Pilih rating toko">
+                <?php for ($star = 1; $star <= 5; $star++): ?>
+                  <button
+                    type="button"
+                    class="payment-success-rating-star<?= $ratingContext['rating'] >= $star ? ' is-active' : '' ?>"
+                    data-rating-star
+                    data-rating-value="<?= $star ?>"
+                    aria-label="Beri rating <?= $star ?> bintang"
+                    aria-pressed="<?= $ratingContext['rating'] >= $star ? 'true' : 'false' ?>"
+                  >★</button>
+                <?php endfor; ?>
+              </div>
+              <div class="payment-success-rating-footer">
+                <p class="payment-success-rating-status" data-rating-status aria-live="polite">
+                  <?= $ratingContext['rating'] > 0 ? 'Rating saat ini: ' . $ratingContext['rating'] . ' bintang.' : 'Belum ada rating dari pesanan ini.' ?>
+                </p>
+                <button type="button" class="payment-success-rating-submit" data-rating-submit>
+                  <?= $ratingContext['rating'] > 0 ? 'Update Rating' : 'Simpan Rating' ?>
+                </button>
+              </div>
+            </div>
+          <?php endif; ?>
           <div class="payment-success-wa" data-success-wa hidden>
             <strong>Notifikasi otomatis belum terkirim.</strong>
             <p>Pesanan sudah tersimpan. Gunakan WhatsApp manual agar penjual tetap menerima detail pesanan.</p>
-            <a href="#" target="_blank" rel="noopener" data-manual-whatsapp>Kirim WhatsApp Manual</a>
+            <button type="button" data-manual-whatsapp>Kirim WhatsApp Manual</button>
           </div>
           <div class="payment-success-actions">
             <a class="payment-success-secondary" href="<?= htmlspecialchars($detailHref, ENT_QUOTES, 'UTF-8') ?>" data-detail-transaction>Lihat detail transaksi</a>
@@ -106,8 +174,22 @@ $homeHref = $basePath . '/';
         const successStatusPill = document.querySelector("[data-success-status-pill]");
         const successCodeInline = document.querySelector("[data-success-code-inline]");
         const successItems = document.querySelector("[data-success-items]");
+        const ratingCard = document.querySelector("[data-rating-card]");
+        const ratingStatus = document.querySelector("[data-rating-status]");
+        const ratingSubmit = document.querySelector("[data-rating-submit]");
+        const ratingStars = Array.from(document.querySelectorAll("[data-rating-star]"));
+        let selectedRating = Number(ratingCard?.dataset.currentRating || 0);
 
         const formatRupiah = (value) => `Rp ${new Intl.NumberFormat("id-ID").format(Number(value) || 0)}`;
+
+        const syncRatingStars = () => {
+          for (const star of ratingStars) {
+            const value = Number(star.dataset.ratingValue || 0);
+            const isActive = value <= selectedRating;
+            star.classList.toggle("is-active", isActive);
+            star.setAttribute("aria-pressed", String(isActive));
+          }
+        };
 
         const renderReceiptItems = (items) => {
           if (!successItems) return;
@@ -122,10 +204,10 @@ $homeHref = $basePath . '/';
             main.className = "payment-success-item-main";
 
             const title = document.createElement("h3");
-            title.textContent = "Detail pesanan tidak tersedia";
+            title.textContent = "Ringkasan pesanan belum tersedia";
 
             const note = document.createElement("p");
-            note.textContent = "Struk tetap valid, tetapi daftar item belum tersimpan di sesi browser.";
+            note.textContent = "Struk tetap valid. Buka halaman detail transaksi untuk melihat status dan rincian terbaru dari server.";
 
             const total = document.createElement("strong");
             total.textContent = "-";
@@ -207,7 +289,7 @@ $homeHref = $basePath . '/';
 
           if (successWa && manualWhatsapp && payment.wa_status === "failed" && payment.manual_whatsapp_url) {
             successWa.hidden = false;
-            manualWhatsapp.href = payment.manual_whatsapp_url;
+            manualWhatsapp.dataset.manualWhatsappUrl = payment.manual_whatsapp_url;
           }
 
           renderReceiptItems(payment.items);
@@ -226,6 +308,64 @@ $homeHref = $basePath . '/';
             successDrawer.setAttribute("aria-hidden", "false");
           }
         }, 800);
+
+        if (manualWhatsapp) {
+          manualWhatsapp.addEventListener("click", () => {
+            const manualUrl = manualWhatsapp.dataset.manualWhatsappUrl || "";
+            if (!manualUrl) return;
+            window.open(manualUrl, "_blank", "noopener");
+          });
+        }
+
+        if (ratingCard && ratingSubmit && ratingStatus && ratingStars.length) {
+          syncRatingStars();
+
+          for (const star of ratingStars) {
+            star.addEventListener("click", () => {
+              selectedRating = Number(star.dataset.ratingValue || 0);
+              syncRatingStars();
+              ratingStatus.textContent = `Rating dipilih: ${selectedRating} bintang.`;
+            });
+          }
+
+          ratingSubmit.addEventListener("click", async () => {
+            if (selectedRating < 1 || selectedRating > 5) {
+              ratingStatus.textContent = "Pilih rating bintang dulu sebelum menyimpan.";
+              return;
+            }
+
+            ratingSubmit.disabled = true;
+            ratingSubmit.textContent = "Menyimpan...";
+
+            try {
+              const response = await fetch(ratingCard.dataset.ratingApi || "", {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                  Accept: "application/json",
+                },
+                body: JSON.stringify({
+                  order_code: ratingCard.dataset.ratingOrderCode || "",
+                  rating: selectedRating,
+                }),
+              });
+
+              const result = await response.json().catch(() => ({}));
+              if (!response.ok || !result.ok) {
+                throw new Error(result.message || "Rating toko gagal disimpan.");
+              }
+
+              ratingCard.dataset.currentRating = String(selectedRating);
+              ratingStatus.textContent = `Rating tersimpan: ${selectedRating} bintang. Rata-rata toko sekarang ${result.avg_rating}/5.`;
+              ratingSubmit.textContent = "Update Rating";
+            } catch (error) {
+              ratingStatus.textContent = error.message || "Rating toko gagal disimpan.";
+              ratingSubmit.textContent = "Simpan Rating";
+            } finally {
+              ratingSubmit.disabled = false;
+            }
+          });
+        }
       })();
     </script>
   </body>

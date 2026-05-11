@@ -884,8 +884,86 @@
   transform: translateY(0);
 }
 
+.payment-success-rating {
+  width: 100%;
+}
+
+.payment-success-rating-copy {
+  color: #5c5c5c;
+  font-size: 14px;
+  line-height: 1.55;
+}
+
+.payment-success-rating-stars {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.payment-success-rating-star {
+  width: 52px;
+  height: 52px;
+  border: 1px solid #e4e4e7;
+  border-radius: 16px;
+  background: #fff;
+  color: #d0d5dd;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  line-height: 1;
+  cursor: pointer;
+  transition: transform 140ms ease, border-color 140ms ease, color 140ms ease, background 140ms ease;
+}
+
+.payment-success-rating-star.is-active {
+  border-color: rgba(255, 122, 0, 0.35);
+  background: #fff7ed;
+  color: var(--primary);
+}
+
+.payment-success-rating-star:hover,
+.payment-success-rating-star:focus-visible {
+  border-color: rgba(255, 122, 0, 0.55);
+  color: var(--primary);
+  outline: none;
+}
+
+.payment-success-rating-footer {
+  display: grid;
+  gap: 12px;
+}
+
+.payment-success-rating-status {
+  color: #5c5c5c;
+  font-size: 14px;
+  line-height: 1.55;
+}
+
+.payment-success-rating-submit {
+  width: 100%;
+  min-height: 52px;
+  padding: 14px 18px;
+  border: 1px solid var(--primary);
+  border-radius: 16px;
+  background: var(--primary);
+  color: #fff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: "Poppins", var(--font-sans);
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.payment-success-rating-submit:disabled {
+  cursor: wait;
+  opacity: 0.75;
+}
+
 .payment-success-wa {
-  width: min(100%, 520px);
+  width: 100%;
   padding: 18px;
   border: 1px solid rgba(180, 35, 24, 0.22);
   border-radius: 18px;
@@ -914,9 +992,12 @@
   line-height: 1.5;
 }
 
-.payment-success-wa a {
+.payment-success-wa a,
+.payment-success-wa button {
+  width: 100%;
   min-height: 44px;
   padding: 12px 16px;
+  border: 0;
   border-radius: 12px;
   background: #25d366;
   color: #fff;
@@ -926,6 +1007,7 @@
   font-family: var(--font-sans);
   font-size: 14px;
   font-weight: 800;
+  cursor: pointer;
 }
 
 .payment-success-secondary {
@@ -1743,6 +1825,16 @@
 
   .payment-success-status-head strong {
     align-self: flex-start;
+  }
+
+  .payment-success-rating-stars {
+    gap: 8px;
+  }
+
+  .payment-success-rating-star {
+    width: 48px;
+    height: 48px;
+    font-size: 26px;
   }
 
   .payment-cancel-actions {

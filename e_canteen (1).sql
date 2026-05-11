@@ -132,6 +132,49 @@ INSERT INTO `payment` (`id_payment`, `id_order_pesanan`, `total_pembayaran`, `me
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `rating_kantin`
+--
+
+CREATE TABLE `rating_kantin` (
+  `id_rating` int(11) NOT NULL,
+  `id_kantin` int(11) NOT NULL,
+  `id_user` int(11) NOT NULL,
+  `kode_pesanan` varchar(32) NOT NULL,
+  `rating` tinyint(1) NOT NULL,
+  `created_at` datetime NOT NULL DEFAULT current_timestamp(),
+  `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `testimoni`
+--
+
+CREATE TABLE `testimoni` (
+  `id_testimoni` int(11) NOT NULL,
+  `nama` varchar(80) NOT NULL,
+  `peran_label` varchar(120) NOT NULL,
+  `isi_testimoni` text NOT NULL,
+  `avatar_path` varchar(255) NOT NULL,
+  `rating` tinyint(1) NOT NULL DEFAULT 5,
+  `urutan` int(11) NOT NULL DEFAULT 0,
+  `is_active` tinyint(1) NOT NULL DEFAULT 1,
+  `created_at` datetime NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `testimoni`
+--
+
+INSERT INTO `testimoni` (`id_testimoni`, `nama`, `peran_label`, `isi_testimoni`, `avatar_path`, `rating`, `urutan`, `is_active`, `created_at`) VALUES
+(1, 'Bu Rina', 'Guru SMKN 8 Semarang', 'Istirahat terasa lebih efisien. Saya bisa pesan makanan lebih cepat tanpa antre, dan waktunya bisa dipakai buat istirahat beneran.', 'assets/img/figma/testi-avatar-1.png', 5, 1, 1, current_timestamp()),
+(2, 'Naila Putri', 'Siswi PPLG SMKN 8 Semarang', 'Pesan dulu dari kelas bikin jam istirahat lebih santai. Tinggal ambil, terus bisa langsung makan tanpa buru-buru.', 'assets/img/figma/testi-avatar-2.png', 5, 2, 1, current_timestamp()),
+(3, 'Bu Suharni', 'Penjual Kantin Mak''e', 'E-Canteen bantu saya ngatur antrean lebih rapi. Pesanan yang masuk juga lebih jelas, jadi lebih cepat diproses.', 'assets/img/figma/testi-avatar-3.png', 5, 3, 1, current_timestamp());
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `penjual`
 --
 
@@ -215,6 +258,21 @@ ALTER TABLE `payment`
   ADD KEY `fk_payment_order` (`id_order_pesanan`);
 
 --
+-- Indexes for table `rating_kantin`
+--
+ALTER TABLE `rating_kantin`
+  ADD PRIMARY KEY (`id_rating`),
+  ADD UNIQUE KEY `uniq_rating_kode_pesanan` (`kode_pesanan`),
+  ADD KEY `idx_rating_kantin` (`id_kantin`),
+  ADD KEY `idx_rating_user` (`id_user`);
+
+--
+-- Indexes for table `testimoni`
+--
+ALTER TABLE `testimoni`
+  ADD PRIMARY KEY (`id_testimoni`);
+
+--
 -- Indexes for table `penjual`
 --
 ALTER TABLE `penjual`
@@ -253,6 +311,18 @@ ALTER TABLE `order_pesanan`
 --
 ALTER TABLE `payment`
   MODIFY `id_payment` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- AUTO_INCREMENT for table `rating_kantin`
+--
+ALTER TABLE `rating_kantin`
+  MODIFY `id_rating` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `testimoni`
+--
+ALTER TABLE `testimoni`
+  MODIFY `id_testimoni` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `penjual`
@@ -294,6 +364,13 @@ ALTER TABLE `order_pesanan`
 --
 ALTER TABLE `payment`
   ADD CONSTRAINT `fk_payment_order` FOREIGN KEY (`id_order_pesanan`) REFERENCES `order_pesanan` (`id_order_pesanan`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `rating_kantin`
+--
+ALTER TABLE `rating_kantin`
+  ADD CONSTRAINT `fk_rating_kantin_kantin` FOREIGN KEY (`id_kantin`) REFERENCES `kantin` (`id_kantin`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_rating_kantin_user` FOREIGN KEY (`id_user`) REFERENCES `user` (`id_user`) ON DELETE CASCADE ON UPDATE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

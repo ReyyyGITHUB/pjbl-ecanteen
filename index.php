@@ -2,11 +2,63 @@
 declare(strict_types=1);
 
 require_once __DIR__ . '/app/auth.php';
+require_once __DIR__ . '/app/db.php';
 
 $currentUser = current_user();
 $isSeller = (($currentUser['role'] ?? '') === 'seller');
 $dashboardHref = ($currentUser && $isSeller) ? seller_dashboard_route($currentUser) : '';
 $accountName = htmlspecialchars((string)($currentUser['username'] ?? ''), ENT_QUOTES, 'UTF-8');
+
+function landing_default_testimonials(): array {
+  return [
+    [
+      'nama' => 'Bu Rina',
+      'peran_label' => 'Guru SMKN 8 Semarang',
+      'isi_testimoni' => 'Istirahat terasa lebih efisien. Saya bisa pesan makanan lebih cepat tanpa antre, dan waktunya bisa dipakai buat istirahat beneran.',
+      'avatar_path' => 'assets/img/figma/testi-avatar-1.png',
+      'rating' => 5,
+    ],
+    [
+      'nama' => 'Naila Putri',
+      'peran_label' => 'Siswi PPLG SMKN 8 Semarang',
+      'isi_testimoni' => 'Pesan dulu dari kelas bikin jam istirahat lebih santai. Tinggal ambil, terus bisa langsung makan tanpa buru-buru.',
+      'avatar_path' => 'assets/img/figma/testi-avatar-2.png',
+      'rating' => 5,
+    ],
+    [
+      'nama' => 'Bu Suharni',
+      'peran_label' => 'Penjual Kantin Mak\'e',
+      'isi_testimoni' => 'E-Canteen bantu saya ngatur antrean lebih rapi. Pesanan yang masuk juga lebih jelas, jadi lebih cepat diproses.',
+      'avatar_path' => 'assets/img/figma/testi-avatar-3.png',
+      'rating' => 5,
+    ],
+  ];
+}
+
+$testimonials = [];
+if (table_exists('testimoni')) {
+  $conn = db();
+  $testimonialQuery = $conn->query(
+    "SELECT nama, peran_label, isi_testimoni, avatar_path, rating
+     FROM testimoni
+     WHERE is_active = 1
+     ORDER BY urutan ASC, id_testimoni ASC"
+  );
+
+  while ($testimonialQuery && ($row = $testimonialQuery->fetch_assoc())) {
+    $testimonials[] = [
+      'nama' => (string)$row['nama'],
+      'peran_label' => (string)$row['peran_label'],
+      'isi_testimoni' => (string)$row['isi_testimoni'],
+      'avatar_path' => (string)$row['avatar_path'],
+      'rating' => max(1, min(5, (int)$row['rating'])),
+    ];
+  }
+}
+
+if (!$testimonials) {
+  $testimonials = landing_default_testimonials();
+}
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -178,6 +230,7 @@ $accountName = htmlspecialchars((string)($currentUser['username'] ?? ''), ENT_QU
         </div>
       </section>
 
+      <?php if ($testimonials): ?>
       <section class="testimonials" id="testimoni">
         <div class="testimonials-inner">
           <div class="testimonials-head">
@@ -187,80 +240,32 @@ $accountName = htmlspecialchars((string)($currentUser['username'] ?? ''), ENT_QU
             <p class="testimonials-subtitle">
               Dengarkan pengalaman para pengguna yang sudah merasakan kemudahan bertransaksi di E-Canteen SMKN 8 Semarang.
             </p>
-          <div class="testimonials-pill">Testimoni Pengguna E-Canteen</div>
+            <div class="testimonials-pill">Testimoni Pengguna E-Canteen</div>
           </div>
 
           <div class="testimonials-carousel" aria-label="Carousel testimoni">
             <div class="testimonials-viewport">
               <div class="testimonials-track">
-                <article class="testi-card">
-                  <div class="testi-top">
-                    <img class="testi-quote" src="assets/img/figma/testi-quote.svg" alt="" />
-                    <div class="testi-stars" aria-hidden="true">
-                      <img src="assets/img/figma/testi-star.svg" alt="" />
-                      <img src="assets/img/figma/testi-star.svg" alt="" />
-                      <img src="assets/img/figma/testi-star.svg" alt="" />
-                      <img src="assets/img/figma/testi-star.svg" alt="" />
-                      <img src="assets/img/figma/testi-star.svg" alt="" />
+                <?php foreach ($testimonials as $testimonial): ?>
+                  <article class="testi-card">
+                    <div class="testi-top">
+                      <img class="testi-quote" src="assets/img/figma/testi-quote.svg" alt="" />
+                      <div class="testi-stars" aria-hidden="true">
+                        <?php for ($i = 0; $i < (int)$testimonial['rating']; $i++): ?>
+                          <img src="assets/img/figma/testi-star.svg" alt="" />
+                        <?php endfor; ?>
+                      </div>
                     </div>
-                  </div>
-                  <p class="testi-text">
-                    Istirahat terasa lebih efisien. Saya bisa pesan makanan lebih cepat tanpa antre, dan waktunya bisa dipakai buat istirahat beneran.
-                  </p>
-                  <div class="testi-footer">
-                    <img class="testi-avatar" src="assets/img/figma/testi-avatar-1.png" alt="" loading="lazy" width="48" height="48" />
-                    <div class="testi-user">
-                      <p class="testi-name">1</p>
-                      <p class="testi-role">Guru SMKN8 Semarang</p>
+                    <p class="testi-text"><?= htmlspecialchars((string)$testimonial['isi_testimoni']) ?></p>
+                    <div class="testi-footer">
+                      <img class="testi-avatar" src="<?= htmlspecialchars((string)$testimonial['avatar_path']) ?>" alt="<?= htmlspecialchars((string)$testimonial['nama']) ?>" loading="lazy" width="48" height="48" />
+                      <div class="testi-user">
+                        <p class="testi-name"><?= htmlspecialchars((string)$testimonial['nama']) ?></p>
+                        <p class="testi-role"><?= htmlspecialchars((string)$testimonial['peran_label']) ?></p>
+                      </div>
                     </div>
-                  </div>
-                </article>
-
-                <article class="testi-card">
-                  <div class="testi-top">
-                    <img class="testi-quote" src="assets/img/figma/testi-quote.svg" alt="" />
-                    <div class="testi-stars" aria-hidden="true">
-                      <img src="assets/img/figma/testi-star.svg" alt="" />
-                      <img src="assets/img/figma/testi-star.svg" alt="" />
-                      <img src="assets/img/figma/testi-star.svg" alt="" />
-                      <img src="assets/img/figma/testi-star.svg" alt="" />
-                      <img src="assets/img/figma/testi-star.svg" alt="" />
-                    </div>
-                  </div>
-                  <p class="testi-text">
-                    Sekarang istirahat terasa lebih efisien. Saya bisa pesan makanan lebih cepat tanpa antre, dan waktunya bisa dipakai buat istirahat beneran.
-                  </p>
-                  <div class="testi-footer">
-                    <img class="testi-avatar" src="assets/img/figma/testi-avatar-2.png" alt="" loading="lazy" width="48" height="48" />
-                    <div class="testi-user">
-                      <p class="testi-name">3</p>
-                      <p class="testi-role">Guru SMKN8 Semarang</p>
-                    </div>
-                  </div>
-                </article>
-
-                <article class="testi-card">
-                  <div class="testi-top">
-                    <img class="testi-quote" src="assets/img/figma/testi-quote.svg" alt="" />
-                    <div class="testi-stars" aria-hidden="true">
-                      <img src="assets/img/figma/testi-star.svg" alt="" />
-                      <img src="assets/img/figma/testi-star.svg" alt="" />
-                      <img src="assets/img/figma/testi-star.svg" alt="" />
-                      <img src="assets/img/figma/testi-star.svg" alt="" />
-                      <img src="assets/img/figma/testi-star.svg" alt="" />
-                    </div>
-                  </div>
-                  <p class="testi-text">
-                    E-Canteen ngebantu banget kalau jam istirahat mepet. Tinggal order duluan, habis itu tinggal ambil tanpa ribut. Bener-bener ngurangin chaos di kantin!
-                  </p>
-                  <div class="testi-footer">
-                    <img class="testi-avatar" src="assets/img/figma/testi-avatar-3.png" alt="" loading="lazy" width="48" height="48" />
-                    <div class="testi-user">
-                      <p class="testi-name">5</p>
-                      <p class="testi-role">Penjual Kantin, Bu Suhari AKA. Mak’e</p>
-                    </div>
-                  </div>
-                </article>
+                  </article>
+                <?php endforeach; ?>
               </div>
             </div>
 
@@ -269,9 +274,9 @@ $accountName = htmlspecialchars((string)($currentUser['username'] ?? ''), ENT_QU
                 <img src="assets/img/figma/testi-arrow-left.svg" alt="" />
               </button>
               <div class="testimonials-dots" aria-label="Posisi carousel">
-                <button class="testimonials-dot" type="button" aria-label="Slide 1"></button>
-                <button class="testimonials-dot" type="button" aria-label="Slide 2"></button>
-                <button class="testimonials-dot" type="button" aria-label="Slide 3"></button>
+                <?php foreach ($testimonials as $index => $_testimonial): ?>
+                  <button class="testimonials-dot" type="button" aria-label="Slide <?= $index + 1 ?>"></button>
+                <?php endforeach; ?>
               </div>
               <button class="testimonials-arrow" type="button" data-dir="1" aria-label="Berikutnya">
                 <img src="assets/img/figma/testi-arrow-right.svg" alt="" />
@@ -280,6 +285,7 @@ $accountName = htmlspecialchars((string)($currentUser['username'] ?? ''), ENT_QU
           </div>
         </div>
       </section>
+      <?php endif; ?>
 
       <footer class="footer" id="footer">
         <div class="footer-inner">
@@ -288,7 +294,7 @@ $accountName = htmlspecialchars((string)($currentUser['username'] ?? ''), ENT_QU
               <h2 class="footer-title">Mau Pesan Makanan Tanpa Antri?</h2>
               <a class="footer-button" href="kantin" aria-label="Mulai pesan">
                 <img class="footer-button-icon" src="assets/img/figma/footer-cart.svg" alt="" />
-                <span class="footer-button-text">Click Disni!</span>
+                <span class="footer-button-text">Klik Di Sini!</span>
               </a>
             </div>
             <p class="footer-copy">
@@ -303,16 +309,16 @@ $accountName = htmlspecialchars((string)($currentUser['username'] ?? ''), ENT_QU
               <a href="#tentang">Tentang</a>
               <a href="#cara-pakai">Cara Pakai</a>
               <a href="#testimoni">Testimoni</a>
-              <a href="#">Pilih Kantin</a>
-              <a href="#">Halaman Kantin</a>
+              <a href="kantin">Pilih Kantin</a>
+              <a href="kantin-1">Halaman Kantin</a>
             </div>
 
             <div class="footer-col">
               <p class="footer-heading">Informasi Kontak</p>
-              <a href="#">Email</a>
-              <a href="#">Instagram</a>
-              <a href="#">Whatsapp</a>
-              <a href="#">Nomor Telepon</a>
+              <span>Email sekolah tersedia saat demo langsung.</span>
+              <span>Instagram kantin akan ditambahkan di fase berikutnya.</span>
+              <span>WhatsApp penjual dipakai di alur pemesanan internal.</span>
+              <span>Nomor telepon ditampilkan saat operasional aktif.</span>
             </div>
           </div>
         </div>

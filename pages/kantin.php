@@ -107,7 +107,7 @@ $benefits = [
       <nav class="kantin-links" aria-label="Navigasi kantin">
         <a href="./">Beranda</a>
         <a href="#pilihan-kantin">Pilihan Kantin</a>
-        <a href="#riwayat">Riwayat Pembelian</a>
+        <a href="riwayat">Riwayat Pembelian</a>
       </nav>
       <div class="kantin-user-wrap" data-kantin-user-menu>
         <button
@@ -145,7 +145,7 @@ $benefits = [
         <img class="hero-food hero-food-soto" src="assets/img/kantin/hero-soto.png" alt="" />
         <div class="kantin-hero-copy">
           <img class="kantin-hero-icon" src="assets/img/kantin/icon-food.svg" alt="" />
-          <h1 id="kantin-hero-title">Laper? Pesan disini aja!</h1>
+          <h1 id="kantin-hero-title">Laper? Pesan di sini aja!</h1>
           <p>Pilih kantin, cari menu favoritmu, lalu pesan tanpa perlu antre panjang di jam istirahat.</p>
         </div>
       </section>
@@ -195,7 +195,7 @@ $benefits = [
 
       <section class="kantin-section" id="pilihan-kantin">
         <div class="section-heading">
-          <h2>Cari Kantin Favoritmu? Cek Disini </h2>
+          <h2>Cari Kantin Favoritmu? Cek di Sini</h2>
         </div>
         <div class="kantin-card-grid">
           <?php foreach ($kantinCards as $index => $card): ?>
@@ -285,7 +285,7 @@ $benefits = [
           <aside class="kantin-list">
             <h3>Daftar Nama - Nama Kantin</h3>
             <?php foreach ($kantinCards as $card): ?>
-              <a href="#" class="kantin-list-item">
+              <a href="<?= htmlspecialchars((string)($card['target'] ?? '#pilihan-kantin')) ?>" class="kantin-list-item">
                 <span>
                   <img src="<?= htmlspecialchars($card['image']) ?>" alt="" />
                   <?= htmlspecialchars($card['name']) ?>
@@ -301,7 +301,7 @@ $benefits = [
     <footer class="kantin-footer">
       <div>
         <h2>Mau Pesan Makanan Tanpa Antri?</h2>
-        <a href="#pilihan-kantin"><img src="assets/img/kantin/icon-cart.svg" alt="" /> Klik Disini!</a>
+        <a href="#pilihan-kantin"><img src="assets/img/kantin/icon-cart.svg" alt="" /> Klik di Sini!</a>
       </div>
       <p>Copyright &copy; 2025 Kelompok 1 XPPLG2 SMKN 8 Semarang. All Rights Reserved.</p>
       <nav aria-label="Footer link">

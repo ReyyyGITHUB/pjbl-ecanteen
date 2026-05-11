@@ -40,7 +40,7 @@ function detail_status_label(string $orderStatus, string $paymentStatus): array 
 $transaction = null;
 $items = [];
 $proofUrl = '';
-$backHref = $basePath . '/payment-success' . ($orderCode !== '' ? '?kode=' . rawurlencode($orderCode) : '');
+$backHref = $basePath . '/riwayat';
 $homeHref = $basePath . '/';
 
 if ($orderCode !== '' && (int)($current['id_user'] ?? 0) > 0) {
@@ -144,12 +144,12 @@ $buyerWaStatus = (string)($transaction['buyer_wa_status'] ?? '');
           <header class="payment-detail-hero">
             <a class="payment-detail-back" href="<?= htmlspecialchars($backHref, ENT_QUOTES, 'UTF-8') ?>">
               <span aria-hidden="true">←</span>
-              <strong>Pesanan Diterima</strong>
+              <strong>Kembali ke Riwayat</strong>
             </a>
             <div class="payment-detail-hero-copy">
               <span class="payment-detail-eyebrow">Detail transaksi</span>
               <h1 id="payment-detail-title"><?= htmlspecialchars($orderCode, ENT_QUOTES, 'UTF-8') ?></h1>
-              <p>Ringkasan pesanan yang sudah disimpan dan diteruskan ke penjual.</p>
+              <p>Ringkasan transaksi yang tersimpan di server, lengkap dengan status pesanan dan pembayaran terbarunya.</p>
             </div>
             <div class="payment-detail-code-card">
               <span>Kode pesanan</span>
@@ -267,7 +267,7 @@ $buyerWaStatus = (string)($transaction['buyer_wa_status'] ?? '');
         <section class="payment-detail-empty">
           <span>Detail transaksi tidak ditemukan</span>
           <h1>Periksa kode pesanan.</h1>
-          <p>Pastikan kode transaksi benar atau buka halaman ini dari tombol detail transaksi di halaman berhasil.</p>
+          <p>Pastikan kode transaksi benar atau buka halaman ini langsung dari riwayat pembelian supaya datanya sesuai.</p>
           <a href="<?= htmlspecialchars($homeHref, ENT_QUOTES, 'UTF-8') ?>">Kembali ke beranda</a>
         </section>
       <?php endif; ?>
