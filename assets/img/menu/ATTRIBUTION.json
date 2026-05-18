@@ -1,0 +1,42 @@
+[
+  {
+    "menu": "ceker",
+    "local_file": "assets/img/menu/ceker.png",
+    "source": "https://commons.wikimedia.org/wiki/File:Deep_fried_chicken_feet.jpg"
+  },
+  {
+    "menu": "otak_otak",
+    "local_file": "assets/img/menu/otak_otak.png",
+    "source": "https://commons.wikimedia.org/wiki/File:Otak-otak_Ikan_Kukus.jpg"
+  },
+  {
+    "menu": "sukun",
+    "local_file": "assets/img/menu/sukun.png",
+    "source": "https://commons.wikimedia.org/wiki/File:Fried_Bread_Fruit.jpg"
+  },
+  {
+    "menu": "hilo",
+    "local_file": "assets/img/menu/hilo.png",
+    "source": "https://commons.wikimedia.org/wiki/File:New_chocolate_milk.JPG"
+  },
+  {
+    "menu": "susu_jahe",
+    "local_file": "assets/img/menu/susu_jahe.png",
+    "source": "https://commons.wikimedia.org/wiki/File:Resep_Wedang_Susu_Jahe.jpg"
+  },
+  {
+    "menu": "teajus",
+    "local_file": "assets/img/menu/teajus.png",
+    "source": "https://commons.wikimedia.org/wiki/File:Iced_tea.jpg"
+  },
+  {
+    "menu": "toracafe",
+    "local_file": "assets/img/menu/toracafe.png",
+    "source": "https://commons.wikimedia.org/wiki/File:Iced_Coffee_Cup_at_Cafe.jpg"
+  },
+  {
+    "menu": "white_coffee",
+    "local_file": "assets/img/menu/white_coffee.png",
+    "source": "https://commons.wikimedia.org/wiki/File:White_cup_filled_with_coffee.jpg"
+  }
+]

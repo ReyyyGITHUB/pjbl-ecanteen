@@ -68,7 +68,12 @@ if (!$testimonials) {
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700&family=Nunito+Sans:wght@400;600&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="assets/css/styles.css" />
+    <script>
+      if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+        document.documentElement.classList.add("scroll-reveal-ready");
+      }
+    </script>
+    <link rel="stylesheet" href="assets/css/styles.css?v=scroll-reveal-2" />
     <link rel="stylesheet" href="assets/css/navbar.css" />
     <link rel="stylesheet" href="assets/css/hero.css" />
     <link rel="stylesheet" href="assets/css/about.css" />
@@ -145,7 +150,7 @@ if (!$testimonials) {
     <main>
       <section class="hero" id="beranda">
         <div class="hero-top">
-          <div class="hero-title">
+          <div class="hero-title" data-scroll-reveal style="--reveal-delay: 0ms">
             <div class="hero-badge">
               ⚡ Pesan Makanan Kantin Lebih Cepat Tanpa Antre ⚡
             </div>
@@ -155,7 +160,7 @@ if (!$testimonials) {
             </h1>
           </div>
 
-          <div class="hero-actions">
+          <div class="hero-actions" data-scroll-reveal style="--reveal-delay: 180ms">
             <form class="hero-search" aria-label="Cari Makanan Anda" action="kantin" method="get" data-hero-search-form>
               <svg class="hero-search-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                 <path d="M6.75 10.5a3.75 3.75 0 1 0 7.5 0 3.75 3.75 0 0 0-7.5 0Z" stroke="currentColor" stroke-width="1.7" />
@@ -190,13 +195,13 @@ if (!$testimonials) {
           </div>
         </div>
 
-        <div class="hero-image">
+        <div class="hero-image" data-scroll-reveal style="--reveal-delay: 360ms">
           <img src="assets/img/figma/hero-image.png" alt="" width="934" height="480" />
         </div>
       </section>
 
       <section class="about" id="tentang">
-        <div class="about-inner">
+        <div class="about-inner" data-scroll-reveal>
           <div class="about-image">
             <img src="assets/img/figma/about-ellipse.png" alt="" loading="lazy" width="344" height="344" />
           </div>
@@ -214,7 +219,7 @@ if (!$testimonials) {
 
       <section class="howto" id="cara-pakai">
         <div class="howto-inner">
-          <div class="howto-head">
+          <div class="howto-head" data-scroll-reveal>
             <div class="howto-kicker">
               <span class="howto-bar" aria-hidden="true"></span>
               <span class="howto-label">Cara Pesan</span>
@@ -225,9 +230,9 @@ if (!$testimonials) {
           </div>
 
           <div class="howto-steps">
-            <img class="howto-step" src="assets/img/figma/howto-1.png" alt="Langkah 1" loading="lazy" width="374" height="573" />
-            <img class="howto-step" src="assets/img/figma/howto-2.png" alt="Langkah 2" loading="lazy" width="374" height="573" />
-            <img class="howto-step" src="assets/img/figma/howto-3.png" alt="Langkah 3" loading="lazy" width="374" height="573" />
+            <img class="howto-step" src="assets/img/figma/howto-1.png" alt="Langkah 1" loading="lazy" width="374" height="573" data-scroll-reveal style="--reveal-delay: 0ms" />
+            <img class="howto-step" src="assets/img/figma/howto-2.png" alt="Langkah 2" loading="lazy" width="374" height="573" data-scroll-reveal style="--reveal-delay: 180ms" />
+            <img class="howto-step" src="assets/img/figma/howto-3.png" alt="Langkah 3" loading="lazy" width="374" height="573" data-scroll-reveal style="--reveal-delay: 360ms" />
           </div>
         </div>
       </section>
@@ -235,7 +240,7 @@ if (!$testimonials) {
       <?php if ($testimonials): ?>
       <section class="testimonials" id="testimoni">
         <div class="testimonials-inner">
-          <div class="testimonials-head">
+          <div class="testimonials-head" data-scroll-reveal>
             <h2 class="testimonials-title">
               Apa <span class="testimonials-accent">Kata Mereka?</span>
             </h2>
@@ -245,7 +250,7 @@ if (!$testimonials) {
             <div class="testimonials-pill">Testimoni Pengguna E-Canteen</div>
           </div>
 
-          <div class="testimonials-carousel" aria-label="Carousel testimoni">
+          <div class="testimonials-carousel" aria-label="Carousel testimoni" data-scroll-reveal>
             <div class="testimonials-viewport">
               <div class="testimonials-track">
                 <?php foreach ($testimonials as $testimonial): ?>
@@ -291,7 +296,7 @@ if (!$testimonials) {
 
       <footer class="footer" id="footer">
         <div class="footer-inner">
-          <div class="footer-left">
+          <div class="footer-left" data-scroll-reveal>
             <div class="footer-cta">
               <h2 class="footer-title">Mau Pesan Makanan Tanpa Antri?</h2>
               <a class="footer-button" href="kantin" aria-label="Mulai pesan">
@@ -304,7 +309,7 @@ if (!$testimonials) {
             </p>
           </div>
 
-          <div class="footer-right">
+          <div class="footer-right" data-scroll-reveal style="--reveal-delay: 180ms">
             <div class="footer-col">
               <p class="footer-heading">Link to</p>
               <a href="#beranda">Beranda</a>
@@ -330,5 +335,6 @@ if (!$testimonials) {
     <script src="assets/js/navbar.js"></script>
     <script src="assets/js/hero-search.js"></script>
     <script src="assets/js/testimonials.js"></script>
+    <script src="assets/js/scroll-reveal.js?v=scroll-reveal-2"></script>
   </body>
 </html>
